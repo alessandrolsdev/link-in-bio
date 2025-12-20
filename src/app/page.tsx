@@ -1,65 +1,50 @@
+import { CyberCard } from "@/components/CyberCard";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="flex min-h-screen flex-col items-center py-20 px-4 max-w-md mx-auto">
+      
+      {/* Avatar com Anel Neon */}
+      <div className="relative w-32 h-32 mb-6">
+        <div className="absolute inset-0 rounded-full border-2 border-neon blur-[2px]" />
+        {/* Substitua pelo seu caminho de imagem depois */}
+        <div className="bg-zinc-800 w-full h-full rounded-full overflow-hidden border-2 border-neon/50 flex items-center justify-center">
+            <span className="text-xs font-mono text-zinc-500">IMG</span>
+        </div>
+      </div>
+
+      {/* Header Texto */}
+      <h1 className="text-3xl font-bold mb-2 text-center">Alessandro Lima</h1>
+      <p className="text-zinc-400 font-mono text-sm mb-10 text-center">
+        &lt;FullStack Developer /&gt;
+      </p>
+
+      {/* Grid de Links */}
+      <div className="w-full space-y-4">
+        <CyberCard 
+          title="Portfólio & Projetos" 
+          subtitle="Meus Cases" 
+          href="https://seusite.com"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        
+        <CyberCard 
+          title="Orçar Landing Page" 
+          subtitle="Alta Conversão" 
+          href="https://wa.me/..."
+        />
+
+        <CyberCard 
+          title="GitHub" 
+          subtitle="@alessandrolsdev" 
+          href="https://github.com/alessandrolsdev"
+        />
+      </div>
+
+      {/* Footer "Hacker" */}
+      <footer className="mt-12 text-zinc-700 text-xs font-mono">
+        SYSTEM_STATUS: <span className="text-neon">ONLINE</span>
+      </footer>
+    </main>
   );
 }
