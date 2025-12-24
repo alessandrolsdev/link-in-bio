@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect width="256" height="256" fill="#0a0a0a"/> {/* Fundo Escuro */}
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="monospace" font-weight="bold" font-size="160" fill="#10b981">
+    A
+  </text>
+  <path d="M20,40 L60,40 M20,40 L20,216 M20,216 L60,216" stroke="#10b981" stroke-width="12" fill="none" stroke-linecap="round"/> {/* Colchete Esq */}
+  <path d="M236,40 L196,40 M236,40 L236,216 M236,216 L196,216" stroke="#10b981" stroke-width="12" fill="none" stroke-linecap="round"/> {/* Colchete Dir */}
+</svg>

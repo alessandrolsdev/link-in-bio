@@ -1,61 +1,29 @@
 @import "tailwindcss";
 
+/* --- 1. CONFIGURAÇÕES BASE --- */
 :root {
   --background: #0a0a0a;
   --foreground: #ededed;
+  --neon-green: #10b981;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* Evita rolagem lateral indesejada */
 }
 
-/* Garante que os links não fiquem azuis/sublinhados por padrão */
+/* Garante que links não fiquem azuis/sublinhados por padrão */
 a {
   color: inherit;
   text-decoration: none;
 }
-/* Animação da Grade */
-@keyframes grid-move {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(40px); }
-}
 
-.cyber-grid {
-  background-size: 40px 40px;
-  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  mask-image: linear-gradient(to bottom, transparent, 10%, black, 90%, transparent); /* Fade nas bordas */
-  animation: grid-move 20s linear infinite;
-  position: fixed;
-  inset: 0;
-  z-index: 0; /* Fica atrás de tudo */
-  pointer-events: none;
-}
-/* Custom Scrollbar (Para ficar dark e fino) */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #0a0a0a;
-}
-::-webkit-scrollbar-thumb {
-  background: #262626;
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #10b981; /* Fica verde no hover */
-}
-
-/* Custom Text Selection */
-::selection {
-  background-color: #10b981; /* Seu Verde Neon */
-  color: #000000; /* Texto preto para contraste */
-}
-/* Spotligt global */
+/* --- 2. SPOTLIGHT (LUZ QUE SEGUE O MOUSE) --- */
+/* Cria um brilho sutil onde o mouse passa */
 body::before {
   content: "";
   position: fixed;
@@ -68,27 +36,137 @@ body::before {
     rgba(16, 185, 129, 0.06), 
     transparent 40%
   );
-  z-index: 1; /* Fica acima do background, abaixo do conteúdo */
+  z-index: 1; /* Fica acima do fundo, mas abaixo do conteúdo */
+  pointer-events: none; /* Deixa o clique passar através dele */
+}
+
+/* --- 3. CUSTOM SCROLLBAR & SELECTION --- */
+/* Barra de rolagem escura e fina */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-green); /* Fica verde no hover */
+}
+
+/* Seleção de texto verde neon */
+::selection {
+  background-color: var(--neon-green);
+  color: #000000;
+}
+
+/* --- 4. CYBER GRID ANIMADO --- */
+/* A grade que se move no fundo */
+@keyframes grid-move {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(40px); }
+}
+
+.cyber-grid {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, transparent, 5%, black, 95%, transparent); /* Fade nas bordas */
+  animation: grid-move 20s linear infinite;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
   pointer-events: none;
 }
-/* MODO HACKER (Ativado pelo Konami Code) */
+
+/* --- 5. EFEITO GLITCH (FOTO CYBERPUNK) --- */
+
+/* Animação 1: Treme e corta para um lado */
+@keyframes glitch-anim-1 {
+  0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, 1px); }
+  20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, -1px); }
+  40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+  60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+  80% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 1px); }
+  100% { clip-path: inset(30% 0 50% 0); transform: translate(2px, -1px); }
+}
+
+/* Animação 2: Treme e corta para o outro lado */
+@keyframes glitch-anim-2 {
+  0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -1px); }
+  20% { clip-path: inset(80% 0 5% 0); transform: translate(-2px, 2px); }
+  40% { clip-path: inset(30% 0 20% 0); transform: translate(2px, 1px); }
+  60% { clip-path: inset(15% 0 80% 0); transform: translate(-2px, -2px); }
+  80% { clip-path: inset(55% 0 10% 0); transform: translate(2px, 1px); }
+  100% { clip-path: inset(40% 0 30% 0); transform: translate(-2px, -1px); }
+}
+
+/* Aplica o glitch nas camadas ocultas quando passa o mouse */
+.glitch-container:hover .glitch-img:nth-child(2) {
+  opacity: 1;
+  animation: glitch-anim-1 0.4s infinite linear alternate-reverse;
+}
+
+.glitch-container:hover .glitch-img:nth-child(3) {
+  opacity: 1;
+  animation: glitch-anim-2 0.4s infinite linear alternate-reverse;
+}
+
+/* --- 6. MODO HACKER (KONAMI CODE) REFINADO --- */
+
+/* Ativa o Canvas de Chuva Matrix */
+.hacker-mode .matrix-canvas {
+  display: block !important;
+  opacity: 0.12; /* Bem suave no fundo */
+}
+
+/* Estilo Base do Modo Hacker */
 .hacker-mode {
   background-color: #000000 !important;
-  color: #00ff00 !important; /* Verde Terminal Puro */
+  color: #00ff00 !important;
   font-family: 'Courier New', Courier, monospace !important;
 }
 
+/* Regra Geral: Tudo ganha borda verde, MAS com exceções */
 .hacker-mode * {
-  border-color: #00ff00 !important; /* Tudo ganha borda verde */
-  box-shadow: none !important; /* Tira sombras suaves */
+  border-color: rgba(0, 255, 0, 0.3); /* Borda mais suave por padrão */
+  box-shadow: none !important;
 }
 
-/* Deixa as imagens verdes (estilo visão noturna) */
+/* --- CORREÇÃO DA FOTO (GLITCH) --- */
+/* Por padrão, a foto fica verde terminal */
 .hacker-mode img {
   filter: grayscale(100%) brightness(0.8) sepia(100%) hue-rotate(50deg) saturate(500%);
+  transition: filter 0.3s ease;
 }
 
+/* Quando passa o mouse, a foto recupera a cor original (Forte especificidade) */
+.hacker-mode .glitch-container:hover img {
+    filter: none !important;
+}
+
+/* --- CORREÇÃO DO RELÓGIO BINÁRIO --- */
+
+/* Bolinhas DESLIGADAS (O segredo do contraste) */
+/* Alvo: classes que usam o fundo cinza escuro */
+.hacker-mode .bg-zinc-800\/40 {
+    background-color: rgba(0, 50, 0, 0.3) !important; /* Verde muito escuro/transparente */
+    border-color: rgba(0, 255, 0, 0.2) !important;    /* Borda quase invisível */
+    box-shadow: none !important;
+}
+
+/* Bolinhas LIGADAS */
+/* Alvo: classes que usam o neon */
 .hacker-mode .bg-neon {
-    background-color: #00ff00 !important;
-    box-shadow: 0 0 20px #00ff00;
+    background-color: #00ff00 !important; /* Verde Puro */
+    border-color: #00ff00 !important;
+    box-shadow: 0 0 15px #00ff00, inset 0 0 10px #00ff00 !important; /* Brilho interno e externo */
+}
+
+/* Ajuste nos textos Neon gerais para não sumirem */
+.hacker-mode .text-neon {
+    color: #00ff00 !important;
+    text-shadow: 0 0 5px #00ff00;
 }
