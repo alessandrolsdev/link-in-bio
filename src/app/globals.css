@@ -18,3 +18,77 @@ a {
   color: inherit;
   text-decoration: none;
 }
+/* Animação da Grade */
+@keyframes grid-move {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(40px); }
+}
+
+.cyber-grid {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, transparent, 10%, black, 90%, transparent); /* Fade nas bordas */
+  animation: grid-move 20s linear infinite;
+  position: fixed;
+  inset: 0;
+  z-index: 0; /* Fica atrás de tudo */
+  pointer-events: none;
+}
+/* Custom Scrollbar (Para ficar dark e fino) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #262626;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #10b981; /* Fica verde no hover */
+}
+
+/* Custom Text Selection */
+::selection {
+  background-color: #10b981; /* Seu Verde Neon */
+  color: #000000; /* Texto preto para contraste */
+}
+/* Spotligt global */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+    rgba(16, 185, 129, 0.06), 
+    transparent 40%
+  );
+  z-index: 1; /* Fica acima do background, abaixo do conteúdo */
+  pointer-events: none;
+}
+/* MODO HACKER (Ativado pelo Konami Code) */
+.hacker-mode {
+  background-color: #000000 !important;
+  color: #00ff00 !important; /* Verde Terminal Puro */
+  font-family: 'Courier New', Courier, monospace !important;
+}
+
+.hacker-mode * {
+  border-color: #00ff00 !important; /* Tudo ganha borda verde */
+  box-shadow: none !important; /* Tira sombras suaves */
+}
+
+/* Deixa as imagens verdes (estilo visão noturna) */
+.hacker-mode img {
+  filter: grayscale(100%) brightness(0.8) sepia(100%) hue-rotate(50deg) saturate(500%);
+}
+
+.hacker-mode .bg-neon {
+    background-color: #00ff00 !important;
+    box-shadow: 0 0 20px #00ff00;
+}
