@@ -5,9 +5,15 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'i.scdn.co', // O domínio de imagens do Spotify
+        hostname: 'i.scdn.co', // Spotify
         port: '',
-        pathname: '/image/**', // Permite qualquer caminho de imagem
+        pathname: '/image/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ytimg.com', // <--- ADICIONE ISSO AQUI (YouTube)
+        port: '',
+        pathname: '/**', 
       },
     ],
   },
