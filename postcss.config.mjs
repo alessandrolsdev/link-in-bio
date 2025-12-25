@@ -1,8 +1,13 @@
-/** @type {import('postcss-load-config').Config} */
+/** 
+ * Configuração do PostCSS.
+ * Define os plugins utilizados no processamento do CSS, incluindo a integração com TailwindCSS.
+ *
+ * @type {import('postcss-load-config').Config} 
+ */
 const config = {
   plugins: {
-    '@tailwindcss/postcss': {}, // O segredo está nesta linha
-    autoprefixer: {},
+    '@tailwindcss/postcss': {}, // Inicializa o TailwindCSS como plugin PostCSS
+    autoprefixer: {}, // Adiciona prefixos de navegador automaticamente para compatibilidade
   },
 };
 

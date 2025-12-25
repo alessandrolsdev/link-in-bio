@@ -2,21 +2,26 @@
 import useSound from "use-sound";
 import { useEffect } from "react";
 
+/**
+ * Gerenciador de Efeitos Sonoros (SFX).
+ * Adiciona sons de 'hover' e 'click' automaticamente a todos os botões e links da página.
+ * Utiliza MutationObserver para garantir que elementos criados dinamicamente também recebam sons.
+ */
 export const SoundManager = () => {
   const [playHover] = useSound("/sounds/hover.mp3", { volume: 0.5 });
   const [playClick] = useSound("/sounds/click.mp3", { volume: 0.5 });
 
   useEffect(() => {
-    // Adiciona som a todos os botões e links automaticamente
+    // Função para anexar listeners de som aos elementos interativos
     const addSoundToElements = () => {
       const elements = document.querySelectorAll("a, button");
-      
+
       elements.forEach((el) => {
         el.addEventListener("mouseenter", () => playHover());
         el.addEventListener("click", () => playClick());
       });
 
-      // Cleanup para não duplicar eventos
+      // Cleanup para evitar listeners duplicados
       return () => {
         elements.forEach((el) => {
           el.removeEventListener("mouseenter", () => playHover());
@@ -25,10 +30,10 @@ export const SoundManager = () => {
       };
     };
 
-    // Roda sempre que a página muda
+    // Executa na montagem inicial
     const cleanup = addSoundToElements();
-    
-    // Observer para pegar elementos que aparecem depois (ex: animações)
+
+    // Observa mudanças no DOM para aplicar sons a novos elementos
     const observer = new MutationObserver(addSoundToElements);
     observer.observe(document.body, { childList: true, subtree: true });
 
@@ -38,5 +43,5 @@ export const SoundManager = () => {
     };
   }, [playHover, playClick]);
 
-  return null;
+  return null; // Componente lógico, sem renderização visual
 };

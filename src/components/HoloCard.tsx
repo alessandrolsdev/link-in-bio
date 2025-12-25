@@ -1,13 +1,24 @@
-"use client"; // Precisa ser Client Component para animação
-
+"use client";
 import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 
+/**
+ * Card Holográfico com Efeito 3D.
+ * Implementa um efeito de "Spotlight" que segue o mouse e uma leve inclinação ou escala.
+ * 
+ * @param {Object} props - Propriedades do componente.
+ * @param {string} props.title - Título do card.
+ * @param {string} props.subtitle - Subtítulo descritivo.
+ * @param {React.ReactNode} props.icon - Ícone ilustrativo.
+ * @param {string} props.href - Link de destino.
+ * @param {number} props.index - Índice para animação em cascata (stagger).
+ */
 export const HoloCard = ({ title, subtitle, icon, href, index }: any) => {
   const ref = useRef<HTMLAnchorElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
+  // Calcula a posição do mouse relativa ao card para o efeito de spotlight
   const handleMouseMove = (e: React.MouseEvent<HTMLAnchorElement>) => {
     if (!ref.current) return;
     const rect = ref.current.getBoundingClientRect();
@@ -31,7 +42,7 @@ export const HoloCard = ({ title, subtitle, icon, href, index }: any) => {
       className="relative block w-full rounded-xl bg-zinc-900/40 border border-white/5 overflow-hidden group"
       style={{ perspective: "1000px" }}
     >
-      {/* O Brilho que segue o mouse (Spotlight) */}
+      {/* Efeito Spotlight: Gradiente radial que segue o cursor */}
       <div
         className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         style={{
@@ -39,6 +50,7 @@ export const HoloCard = ({ title, subtitle, icon, href, index }: any) => {
         }}
       />
 
+      {/* Conteúdo do Card */}
       <div className="relative flex items-center justify-between p-5 z-10 transition-transform duration-200 group-hover:scale-[1.01]">
         <div className="flex items-center gap-4">
           <div className="p-2 rounded-lg bg-white/5 text-neon ring-1 ring-white/10 group-hover:ring-neon/50 transition-all">

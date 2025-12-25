@@ -9,19 +9,21 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Nossa base "Dark Premium" (não é preto #000, é um cinza rico)
-        background: "#0a0a0a", 
+        // Base escura premium (Cinza rico ao invés de preto absoluto)
+        background: "#0a0a0a",
         surface: "#111111",
-        // O verde do seu anel de perfil (ajustado para brilhar)
+
+        // Paleta de cores Neon (Foco em Emerald para identidade visual)
         neon: {
-          DEFAULT: "#10b981", // Emerald-500
-          glow: "#34d399",    // Emerald-400 para brilhos
-          dim: "rgba(16, 185, 129, 0.1)", // Para fundos sutis
+          DEFAULT: "#10b981", // Cor base (Emerald-500)
+          glow: "#34d399",    // Variação para efeitos de brilho (Emerald-400)
+          dim: "rgba(16, 185, 129, 0.1)", // Variação translúcida para fundos sutis
         }
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'cyber-grid': "url('/grid-pattern.svg')", // Opcional pro futuro
+        // Padrão de grid cibernético para seções de destaque
+        'cyber-grid': "url('/grid-pattern.svg')",
       },
     },
   },

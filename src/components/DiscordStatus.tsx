@@ -2,6 +2,11 @@
 import { useLanyard } from "@/hooks/useLanyard";
 import { Loader2, Gamepad2, Code } from "lucide-react";
 
+/**
+ * Widget de Status do Discord.
+ * Utiliza a API Lanyard para buscar o status em tempo real do usuário no Discord.
+ * Exibe estado (Online, Offline, DND) e atividade atual (Jogando, Codando).
+ */
 export const DiscordStatus = () => {
   const { data: user, isLoading } = useLanyard();
 
@@ -14,21 +19,21 @@ export const DiscordStatus = () => {
     );
   }
 
-  // Define a cor baseada no status
+  // Mapeamento de cores baseado no status do Discord
   const statusColor = {
     online: "bg-green-500",
     idle: "bg-yellow-500",
     dnd: "bg-red-500",
     offline: "bg-zinc-500",
-  }[user?.discord_status || "offline"];
+  }[user?.discord_status as "online" | "idle" | "dnd" | "offline" || "offline"];
 
-  // Tenta achar se você está codando ou jogando
-  const activity = user?.activities?.find((act: any) => act.type === 0); // 0 = Jogo/App
+  // Identifica a atividade principal (Activity Type 0 = Playing/App)
+  const activity = user?.activities?.find((act: any) => act.type === 0);
 
   return (
     <div className="flex items-center gap-3 px-4 py-2 rounded-full bg-zinc-900/80 border border-white/10 backdrop-blur-md mt-4 shadow-lg hover:border-neon/30 transition-colors cursor-help group relative">
-      
-      {/* Bolinha de Status (Com pulso se estiver online/dnd) */}
+
+      {/* Indicador Visual de Status (Ping Animation) */}
       <div className="relative flex h-3 w-3">
         {user?.discord_status !== "offline" && (
           <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${statusColor}`} />
@@ -37,25 +42,25 @@ export const DiscordStatus = () => {
       </div>
 
       <div className="flex flex-col">
-        {/* Texto Principal */}
+        {/* Status Textual */}
         <span className="text-xs font-bold text-zinc-200 uppercase tracking-wider leading-none">
-            {user?.discord_status === "dnd" ? "Do Not Disturb" : user?.discord_status}
+          {user?.discord_status === "dnd" ? "Do Not Disturb" : user?.discord_status}
         </span>
 
-        {/* Texto Secundário (O que está fazendo) */}
+        {/* Atividade Atual */}
         {activity ? (
-            <span className="text-[10px] text-zinc-400 font-mono flex items-center gap-1 mt-1 truncate max-w-[150px]">
-                {activity.name === "Visual Studio Code" ? <Code size={10} /> : <Gamepad2 size={10} />}
-                {activity.name}
-            </span>
+          <span className="text-[10px] text-zinc-400 font-mono flex items-center gap-1 mt-1 truncate max-w-[150px]">
+            {activity.name === "Visual Studio Code" ? <Code size={10} /> : <Gamepad2 size={10} />}
+            {activity.name}
+          </span>
         ) : (
-            <span className="text-[10px] text-zinc-500 font-mono mt-0.5">
-                {user?.discord_status === "offline" ? "Sleeping..." : "No Activity"}
-            </span>
+          <span className="text-[10px] text-zinc-500 font-mono mt-0.5">
+            {user?.discord_status === "offline" ? "Sleeping..." : "No Activity"}
+          </span>
         )}
       </div>
 
-      {/* Tooltip com ID (Só aparece no hover) */}
+      {/* Tooltip com Username */}
       <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-black border border-white/10 rounded text-[9px] text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
         User: alessandro#0000
       </div>

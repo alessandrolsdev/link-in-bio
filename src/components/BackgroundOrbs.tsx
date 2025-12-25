@@ -1,10 +1,15 @@
 "use client";
 import { motion } from "framer-motion";
 
+/**
+ * Componente de Fundo Animado (Orbs).
+ * Renderiza esferas de luz difusa que se movem suavemente ao fundo para criar ambiência.
+ * Utiliza Framer Motion para animações contínuas e infinitas.
+ */
 export const BackgroundOrbs = () => {
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10">
-      {/* Orb 1 - Top Left */}
+      {/* Orb 1 - Canto Superior Esquerdo */}
       <motion.div
         animate={{
           x: [0, 100, 0],
@@ -19,7 +24,7 @@ export const BackgroundOrbs = () => {
         className="absolute -top-20 -left-20 w-96 h-96 bg-neon/20 rounded-full blur-[128px]"
       />
 
-      {/* Orb 2 - Bottom Right */}
+      {/* Orb 2 - Canto Inferior Direito */}
       <motion.div
         animate={{
           x: [0, -100, 0],

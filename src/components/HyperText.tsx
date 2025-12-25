@@ -3,6 +3,13 @@ import { useEffect, useRef, useState } from "react";
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@%&*!";
 
+/**
+ * Componente de Texto Hiperativo (Matrix Effect).
+ * Ao passar o mouse, o texto embaralha aleatoriamente antes de estabilizar na palavra original.
+ * 
+ * @param {Object} props
+ * @param {string} props.text - O texto a ser exibido e animado.
+ */
 export default function HyperText({ text }: { text: string }) {
   const [displayText, setDisplayText] = useState(text);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -34,7 +41,7 @@ export default function HyperText({ text }: { text: string }) {
 
   return (
     <h1
-      onMouseEnter={scramble} // Dispara quando passa o mouse
+      onMouseEnter={scramble}
       className="text-3xl font-bold mb-2 text-center tracking-tight cursor-default"
     >
       {displayText}

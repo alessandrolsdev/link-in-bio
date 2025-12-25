@@ -2,6 +2,14 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 
+/**
+ * Componente Magnético.
+ * Faz com que o elemento filho seja "atraído" pelo cursor do mouse quando próximo.
+ * Utiliza Framer Motion para uma animação de mola (spring) suave.
+ * 
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - O elemento a ser magnetizado.
+ */
 export default function Magnetic({ children }: { children: React.ReactNode }) {
   const ref = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -9,11 +17,11 @@ export default function Magnetic({ children }: { children: React.ReactNode }) {
   const handleMouse = (e: React.MouseEvent) => {
     const { clientX, clientY } = e;
     const { height, width, left, top } = ref.current?.getBoundingClientRect() || { height: 0, width: 0, left: 0, top: 0 };
-    
+
     const middleX = clientX - (left + width / 2);
     const middleY = clientY - (top + height / 2);
 
-    setPosition({ x: middleX * 0.5, y: middleY * 0.5 }); // O 0.5 define a "força" do imã
+    setPosition({ x: middleX * 0.5, y: middleY * 0.5 }); // Fator 0.5 define a intensidade da atração
   };
 
   const reset = () => {

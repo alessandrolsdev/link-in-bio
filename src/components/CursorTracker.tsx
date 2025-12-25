@@ -1,6 +1,15 @@
 "use client";
 import { useEffect } from "react";
 
+/**
+ * Rastreador de Cursor (Cursor Tracker).
+ * Atualiza variáveis CSS globais (--mouse-x, --mouse-y) conforma o mouse se move.
+ * Essencial para efeitos de Spotlight e iluminação dinâmica que dependem da posição do mouse.
+ * 
+ * @example
+ * // No CSS:
+ * // background: radial-gradient(circle at var(--mouse-x) var(--mouse-y), ...);
+ */
 export const CursorTracker = () => {
   useEffect(() => {
     const updateMouse = (e: MouseEvent) => {
@@ -12,5 +21,5 @@ export const CursorTracker = () => {
     return () => window.removeEventListener("mousemove", updateMouse);
   }, []);
 
-  return null;
+  return null; // Componente lógico sem renderização visual direta
 };

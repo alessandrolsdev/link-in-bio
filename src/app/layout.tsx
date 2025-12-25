@@ -2,21 +2,24 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-// --- 1. IMPORTANDO OS EFEITOS VISUAIS E LÓGICOS ---
-import { CursorTracker } from "@/components/CursorTracker"; // Rastreia o mouse para o Spotlight
-import { NoiseOverlay } from "@/components/NoiseOverlay";   // Textura de TV antiga (Film Grain)
-import { BackgroundOrbs } from "@/components/BackgroundOrbs"; // Luzes ambientais flutuantes
-import { SoundManager } from "@/components/SoundManager";   // Sistema de Sons (Click/Hover)
+import { CursorTracker } from "@/components/CursorTracker";
+import { NoiseOverlay } from "@/components/NoiseOverlay";
+import { BackgroundOrbs } from "@/components/BackgroundOrbs";
+import { SoundManager } from "@/components/SoundManager";
 
-// --- 2. IMPORTANDO AS FERRAMENTAS DE INTERATIVIDADE ---
-import { CommandMenu } from "@/components/CommandMenu";     // Menu Secreto (Ctrl + K)
-import { KonamiWrapper } from "@/components/KonamiWrapper"; // Easter Egg (Konami Code)
-import { TerminalModal } from "@/components/TerminalModal"; // Terminal Hacker (Botão Flutuante)
+import { CommandMenu } from "@/components/CommandMenu";
+import { KonamiWrapper } from "@/components/KonamiWrapper";
+import { TerminalModal } from "@/components/TerminalModal";
 import { MatrixRain } from "@/components/MatrixRain";
-// Configurando as fontes (Clean + Hacker)
+
+// Configuração de fontes otimizadas
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jetbrains = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
+/**
+ * Metadados globais da aplicação (SEO padrão).
+ * @see https://nextjs.org/docs/app/building-your-application/optimizing/metadata
+ */
 export const metadata: Metadata = {
   title: {
     default: "Alessandro Lima | FullStack Engineer",
@@ -32,11 +35,10 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    url: "https://seu-link-vercel.app", // Coloque seu link final aqui
+    url: "https://seu-link-vercel.app",
     title: "Alessandro Lima | FullStack Engineer",
     description: "Interfaces Imersivas & Código Limpo.",
     siteName: "Alessandro Lima Portfolio",
-    // images: [ ... ] // A gente pode gerar essa imagem depois
   },
   robots: {
     index: true,
@@ -44,6 +46,17 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * Layout Raiz (RootLayout)
+ * Envolve toda a aplicação e gerencia providers globais, fontes e elementos de interface persistentes (como background e modais).
+ * 
+ * Estrutura de Camadas (Layers):
+ * 1. Background & Ambiência (Grid, Noise, Matrix)
+ * 2. Lógica Invisível (Cursor, Som, Konami)
+ * 3. Interface Global (Command Menu)
+ * 4. Conteúdo da Página ({children})
+ * 5. Elementos Flutuantes (Terminal)
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -51,29 +64,28 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body 
+      <body
         className={`${inter.variable} ${jetbrains.variable} bg-background text-white antialiased overflow-x-hidden`}
       >
-        {/* --- CAMADA 1: BACKGROUND & AMBIÊNCIA --- */}
-        <div className="cyber-grid" /> {/* Grade Animada (Vem do CSS Global) */}
-        <BackgroundOrbs />             {/* Luzes Verdes Flutuantes */}
-        <NoiseOverlay />               {/* Textura Granulada */}
-        <MatrixRain />                 {/* Efeito Matrix */}
-        {/* --- CAMADA 2: LÓGICA INVISÍVEL --- */}
-        <CursorTracker />              {/* Atualiza variáveis CSS do mouse */}
-        <SoundManager />               {/* Gerencia os sons de UI */}
-        <KonamiWrapper />              {/* Escuta o código secreto */}
-        
+        {/* Camada 1: Background & Ambiência */}
+        <div className="cyber-grid" />
+        <BackgroundOrbs />
+        <NoiseOverlay />
+        <MatrixRain />
 
-        {/* --- CAMADA 3: INTERFACE GLOBAL --- */}
-        <CommandMenu />                {/* O Menu Ctrl+K (Fica escondido até chamar) */}
-        
-        {/* --- CAMADA 4: O CONTEÚDO DA PÁGINA --- */}
+        {/* Camada 2: Lógica Invisível e Utilitários */}
+        <CursorTracker />
+        <SoundManager />
+        <KonamiWrapper />
+
+        {/* Camada 3: Componentes de Interface Globais */}
+        <CommandMenu />
+
+        {/* Camada 4: Conteúdo da Página */}
         {children}
 
-        {/* --- CAMADA 5: ELEMENTOS FLUTUANTES (Acima de tudo) --- */}
-        <TerminalModal />              {/* O Botão do Terminal no canto */}
-        
+        {/* Camada 5: Elementos Flutuantes (Overlay) */}
+        <TerminalModal />
       </body>
     </html>
   );

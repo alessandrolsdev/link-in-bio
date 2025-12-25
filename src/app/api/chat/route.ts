@@ -1,6 +1,13 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
+/**
+ * Rota da API para o Chatbot com IA (Gemini).
+ * Recebe mensagens do front-end e retorna a resposta da IA personificada.
+ * 
+ * @param {Request} req - A requisição HTTP contendo a mensagem do usuário.
+ * @returns {Promise<NextResponse>} A resposta JSON com o texto gerado.
+ */
 export async function POST(req: Request) {
   try {
     const { message } = await req.json();
@@ -11,8 +18,8 @@ export async function POST(req: Request) {
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    
-    // Mantendo a versão 2.5 que está voando baixo 🚀
+
+    // Utilizando o modelo Gemini 2.5 Flash para performance otimizada
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     const prompt = `
@@ -69,8 +76,8 @@ export async function POST(req: Request) {
 
   } catch (error: any) {
     console.error(`❌ ERRO NO CÉREBRO DIGITAL: ${error.message}`);
-    return NextResponse.json({ 
-      error: `Erro de conexão neural.` 
+    return NextResponse.json({
+      error: `Erro de conexão neural.`
     }, { status: 500 });
   }
 }

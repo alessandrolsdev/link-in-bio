@@ -1,5 +1,8 @@
 // src/lib/github.ts
 
+/**
+ * Interface representando o perfil do usuário retornada pela API do GitHub.
+ */
 export interface GithubProfile {
   login: string;
   avatar_url: string;
@@ -11,11 +14,16 @@ export interface GithubProfile {
   following: number;
 }
 
+/**
+ * Busca os dados do perfil do usuário no GitHub.
+ * Utiliza fetch com cache configurado para 1 hora (ISR) para evitar rate links e melhorar performance.
+ * 
+ * @returns {Promise<GithubProfile>} Dados do perfil.
+ * @throws {Error} Se a requisição falhar.
+ */
 export async function getGithubProfile(): Promise<GithubProfile> {
-  // O "next: { revalidate: 3600 }" faz cache por 1 hora. 
-  // O GitHub não te bloqueia e seu site carrega voando.
   const res = await fetch('https://api.github.com/users/alessandrolsdev', {
-    next: { revalidate: 3600 } 
+    next: { revalidate: 3600 }
   });
 
   if (!res.ok) {

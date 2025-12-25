@@ -2,6 +2,11 @@ import { getLatestVideo } from "@/lib/youtube";
 import Image from "next/image";
 import { Youtube, PlayCircle } from "lucide-react";
 
+/**
+ * Widget do YouTube.
+ * Mostra o vídeo mais recente postado ou assistido (dependendo da lógica da API).
+ * Busca metadados via função server-side `getLatestVideo`.
+ */
 export const YoutubeWidget = async () => {
   const video = await getLatestVideo();
 
@@ -25,21 +30,21 @@ export const YoutubeWidget = async () => {
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0"
         />
-        {/* Ícone de Play no centro da imagem no hover */}
+        {/* Ícone de Play no hover */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-            <PlayCircle size={20} className="text-white drop-shadow-md" />
+          <PlayCircle size={20} className="text-white drop-shadow-md" />
         </div>
       </div>
 
-      {/* Textos */}
+      {/* Textos Informativos */}
       <div className="flex flex-col gap-1 min-w-0 z-10">
         <div className="flex items-center gap-2 mb-1">
-            <Youtube size={12} className="text-[#FF0000]" />
-            <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-400">
-                Watching / Learning
-            </span>
+          <Youtube size={12} className="text-[#FF0000]" />
+          <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-400">
+            Watching / Learning
+          </span>
         </div>
-        
+
         <h3 className="truncate font-bold text-zinc-100 text-sm group-hover:text-[#FF0000] transition-colors">
           {video.title}
         </h3>
@@ -48,7 +53,7 @@ export const YoutubeWidget = async () => {
         </p>
       </div>
 
-      {/* Seta animada */}
+      {/* Seta indicativa animada */}
       <div className="absolute right-4 text-zinc-600 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
         →
       </div>
