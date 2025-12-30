@@ -1,16 +1,17 @@
 "use client";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  GitCommit, 
-  GitBranch, 
-  Star, 
-  Terminal, 
-  GitPullRequest, 
+import {
+  GitCommit,
+  GitBranch,
+  Star,
+  Terminal,
+  GitPullRequest,
   AlertCircle,
   ChevronDown,
   Minimize2
 } from "lucide-react";
+import { GithubEvent } from "@/lib/github";
 
 // Função auxiliar de tempo
 const formatTime = (dateString: string) => {
@@ -18,7 +19,7 @@ const formatTime = (dateString: string) => {
   return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 };
 
-export const GithubLogList = ({ events }: { events: any[] }) => {
+export const GithubLogList = ({ events }: { events: GithubEvent[] }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Se não tiver eventos, não renderiza nada
@@ -29,66 +30,66 @@ export const GithubLogList = ({ events }: { events: any[] }) => {
 
   return (
     <div className="flex flex-col gap-2 transition-all duration-300">
-      
+
       {/* Header Interativo */}
-      <div 
+      <div
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-center justify-between text-[10px] text-green-500 font-mono tracking-widest uppercase cursor-pointer hover:text-green-400 group select-none"
       >
         <div className="flex items-center gap-2">
-            <Terminal size={10} />
-            <span>{isExpanded ? "FULL_SYSTEM_LOGS" : "LATEST_ACTIVITY"}</span>
-            <span className="animate-pulse">_</span>
+          <Terminal size={10} />
+          <span>{isExpanded ? "FULL_SYSTEM_LOGS" : "LATEST_ACTIVITY"}</span>
+          <span className="animate-pulse">_</span>
         </div>
-        
+
         {/* Ícone de Expandir/Recolher */}
         <div className="opacity-60 group-hover:opacity-100 transition-opacity">
-            {isExpanded ? <Minimize2 size={12} /> : <ChevronDown size={12} />}
+          {isExpanded ? <Minimize2 size={12} /> : <ChevronDown size={12} />}
         </div>
       </div>
 
       {/* Lista Animada */}
       <div className={`flex flex-col gap-2 ${isExpanded ? "bg-black/90 p-2 rounded border border-zinc-800/50" : ""}`}>
         <AnimatePresence mode="popLayout">
-            {displayedEvents.map((event: any) => (
-            <motion.div 
-                key={event.id} 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="flex gap-3 text-xs font-mono group"
+          {displayedEvents.map((event) => (
+            <motion.div
+              key={event.id}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="flex gap-3 text-xs font-mono group"
             >
-                {/* Timestamp */}
-                <span className="text-zinc-600 shrink-0 text-[10px] pt-0.5">
+              {/* Timestamp */}
+              <span className="text-zinc-600 shrink-0 text-[10px] pt-0.5">
                 [{formatTime(event.date)}]
-                </span>
+              </span>
 
-                {/* Conteúdo */}
-                <div className="flex flex-col min-w-0">
+              {/* Conteúdo */}
+              <div className="flex flex-col min-w-0">
                 <div className="flex items-center gap-1.5 text-zinc-400 group-hover:text-green-400 transition-colors">
-                    {event.type === "PushEvent" && <GitCommit size={12} />}
-                    {event.type === "CreateEvent" && <GitBranch size={12} />}
-                    {event.type === "WatchEvent" && <Star size={12} className="text-yellow-500" />}
-                    {event.type === "PullRequestEvent" && <GitPullRequest size={12} className="text-purple-400" />}
-                    {event.type === "IssuesEvent" && <AlertCircle size={12} className="text-red-400" />}
-                    
-                    <span className="uppercase tracking-tight font-bold truncate">{event.repo}</span>
+                  {event.type === "PushEvent" && <GitCommit size={12} />}
+                  {event.type === "CreateEvent" && <GitBranch size={12} />}
+                  {event.type === "WatchEvent" && <Star size={12} className="text-yellow-500" />}
+                  {event.type === "PullRequestEvent" && <GitPullRequest size={12} className="text-purple-400" />}
+                  {event.type === "IssuesEvent" && <AlertCircle size={12} className="text-red-400" />}
+
+                  <span className="uppercase tracking-tight font-bold truncate">{event.repo}</span>
                 </div>
-                
+
                 {/* Mensagem (Só mostra em modo expandido ou se for muito curta) */}
                 <span className={`text-zinc-500 text-[10px] truncate max-w-[200px] ${!isExpanded && "hidden"}`}>
-                    {event.message}
+                  {event.message}
                 </span>
-                </div>
+              </div>
             </motion.div>
-            ))}
+          ))}
         </AnimatePresence>
       </div>
 
       {/* Dica visual pequena quando recolhido */}
       {!isExpanded && (
         <div className="text-[8px] text-zinc-700 font-mono text-right hover:text-green-500 cursor-pointer" onClick={() => setIsExpanded(true)}>
-            + {events.length - 1} more events...
+          + {events.length - 1} more events...
         </div>
       )}
 

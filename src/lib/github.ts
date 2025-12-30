@@ -1,4 +1,36 @@
-export async function getGithubEvents() {
+
+export interface GithubEvent {
+  id: string;
+  type: string;
+  repo: string;
+  date: string;
+  message: string;
+}
+
+export interface ProductivityStats {
+  score: number;
+  level: string;
+  color: string;
+  message: string;
+}
+
+// Interfaces auxiliares para a resposta da API do GitHub (não exportadas se não necessário fora)
+interface GithubApiEvent {
+  id: string;
+  type: string;
+  created_at: string;
+  repo: {
+    name: string;
+  };
+  payload: {
+    commits?: Array<{ message: string }>;
+    pull_request?: { title: string };
+    issue?: { title: string };
+    size?: number;
+  };
+}
+
+export async function getGithubEvents(): Promise<GithubEvent[]> {
   try {
     // Busca os últimos 15 eventos públicos do seu usuário
     const response = await fetch("https://api.github.com/users/alessandrolsdev/events?per_page=15", {
@@ -7,24 +39,24 @@ export async function getGithubEvents() {
 
     if (!response.ok) return [];
 
-    const events = await response.json();
+    const events: GithubApiEvent[] = await response.json();
 
     // Filtra só o que interessa
     return events
-      .filter((ev: any) =>
+      .filter((ev) =>
         ev.type === "PushEvent" ||
         ev.type === "CreateEvent" ||
         ev.type === "WatchEvent" ||
-        ev.type === "PullRequestEvent" || // NOVO
-        ev.type === "IssuesEvent"         // NOVO
+        ev.type === "PullRequestEvent" ||
+        ev.type === "IssuesEvent"
       )
-      .map((ev: any) => {
+      .map((ev) => {
         // Lógica para pegar a mensagem correta dependendo do evento
         let message = "System update";
 
-        if (ev.type === "PushEvent") message = ev.payload.commits?.[0]?.message;
-        else if (ev.type === "PullRequestEvent") message = `PR: ${ev.payload.pull_request.title}`;
-        else if (ev.type === "IssuesEvent") message = `Issue: ${ev.payload.issue.title}`;
+        if (ev.type === "PushEvent") message = ev.payload.commits?.[0]?.message || "No commit message";
+        else if (ev.type === "PullRequestEvent") message = `PR: ${ev.payload.pull_request?.title || "Unknown PR"}`;
+        else if (ev.type === "IssuesEvent") message = `Issue: ${ev.payload.issue?.title || "Unknown Issue"}`;
         else if (ev.type === "WatchEvent") message = "Starred repository";
         else if (ev.type === "CreateEvent") message = "Created repository/branch";
 
@@ -33,7 +65,7 @@ export async function getGithubEvents() {
           type: ev.type,
           repo: ev.repo.name.replace("alessandrolsdev/", ""),
           date: ev.created_at,
-          message: message, // Mensagem dinâmica
+          message: message,
         };
       });
   } catch (error) {
@@ -44,7 +76,7 @@ export async function getGithubEvents() {
 
 // --- NOVA FUNÇÃO DE PRODUTIVIDADE ---
 
-export async function getDailyProductivity() {
+export async function getDailyProductivity(): Promise<ProductivityStats> {
   try {
     // Busca os últimos 100 eventos para garantir que cobrimos o dia
     const res = await fetch("https://api.github.com/users/alessandrolsdev/events?per_page=100", {
@@ -53,18 +85,18 @@ export async function getDailyProductivity() {
 
     if (!res.ok) return { score: 0, level: "OFFLINE", color: "text-zinc-500", message: "GitHub API Sleeping..." };
 
-    const events = await res.json();
+    const events: GithubApiEvent[] = await res.json();
 
     // Data de hoje (UTC simples)
     const today = new Date().toISOString().split('T')[0];
 
     // Filtra eventos de HOJE
-    const todaysEvents = events.filter((ev: any) => ev.created_at?.startsWith(today));
+    const todaysEvents = events.filter((ev) => ev.created_at?.startsWith(today));
 
     // Calcula pontuação
     let score = 0;
 
-    todaysEvents.forEach((ev: any) => {
+    todaysEvents.forEach((ev) => {
       if (ev.type === "PushEvent") {
         score += ev.payload.size || 1;
       } else if (ev.type === "PullRequestEvent" || ev.type === "IssuesEvent" || ev.type === "CreateEvent") {
@@ -80,8 +112,8 @@ export async function getDailyProductivity() {
   }
 }
 
-// Função auxiliar interna (não precisa de export)
-function calculateMood(score: number) {
+// Função auxiliar interna
+function calculateMood(score: number): ProductivityStats {
   if (score === 0) return {
     score,
     level: "ZEN MODE",
