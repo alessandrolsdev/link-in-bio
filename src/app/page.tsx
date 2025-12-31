@@ -13,16 +13,15 @@ import { GithubLog } from "@/components/GithubLog";
 import { DevMood } from "@/components/DevMood";
 import { ActionButtons } from "@/components/ActionButtons";
 
-// --- NOVOS IMPORTS (QUE ESTAVAM FALTANDO) ---
+// --- WIDGETS PARA OS SLOTS ---
 import { NexusControlPanel } from "@/components/NexusControlPanel";
-import { GithubWidget } from "@/components/GithubWidget";   // <--- Faltava este
-import { DiscordStatus } from "@/components/DiscordStatus"; // <--- E este
+import { GithubWidget } from "@/components/GithubWidget";
+import { DiscordStatus } from "@/components/DiscordStatus";
 
 export default function Home() {
    return (
-      <main className="min-h-screen bg-black text-zinc-200 selection:bg-purple-500/30 relative overflow-x-hidden pb-32">
+      <main className="min-h-screen bg-black text-zinc-200 selection:bg-purple-500/30 relative overflow-x-hidden pb-20"> {/* Reduzi pb-32 para pb-20 */}
 
-         {/* LAYER DE FUNDO */}
          <MatrixRain />
          <CommandMenu />
 
@@ -47,6 +46,7 @@ export default function Home() {
          <div className="fixed bottom-6 left-6 z-40 hidden lg:block w-72">
             <SpotifyWidget />
          </div>
+
          <div className="fixed bottom-6 right-6 z-40 hidden lg:block">
             <Link
                href="https://youtube.com/playlist?list=SUA_PLAYLIST"
@@ -62,61 +62,76 @@ export default function Home() {
          </div>
 
 
-         {/* --- CONTEÚDO PRINCIPAL COMPACTO --- */}
-         {/* Reduzi pt-20 para pt-10 para ganhar espaço */}
-         <div className="max-w-4xl mx-auto px-6 pt-10 relative z-10">
+         {/* --- CONTEÚDO PRINCIPAL --- */}
+         {/* Reduzi pt-36 para pt-28. Em telas menores, pode ir para pt-24 se precisar */}
+         <div className="max-w-4xl mx-auto px-6 pt-20 md:pt-24 relative z-10">
 
-            {/* HEADER: Mais compacto */}
-            <h1 className="mt-4 text-3xl md:text-4xl font-bold tracking-tight text-white">
-               ALESSANDRO <span className="text-purple-500">LIMA</span>
-            </h1>
-            <p className="mt-2 text-zinc-400 font-mono text-xs md:text-sm mb-6"> {/* Adicionei mb-6 aqui para afastar dos botões */}
-               FullStack Engineer • Nexus Eleva Co-Founder
-            </p>
+            {/* HEADER COMPACTO */}
+            <section className="text-center mb-6">
+               <div className="inline-block relative">
+                  {/* Reduzi levemente o avatar para w-20/h-20 mobile */}
+                  <div className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-zinc-800 border-2 border-purple-500/50 mx-auto overflow-hidden shadow-[0_0_40px_rgba(168,85,247,0.4)] relative group cursor-pointer hover:scale-105 transition-transform">
+                     <Image
+                        src="https://github.com/alessandrolsdev.png"
+                        alt="Avatar Alessandro Lima"
+                        width={112}
+                        height={112}
+                        className="object-cover"
+                        priority
+                     />
+                  </div>
+                  <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-black animate-pulse" />
+               </div>
 
-            {/* Botões Estilo Linktree */}
-            <div className="mb-10 w-full px-4"> {/* Container para controlar a largura no mobile */}
-               <ActionButtons />
-            </div>
+               <h1 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-white">
+                  ALESSANDRO <span className="text-purple-500">LIMA</span>
+               </h1>
+               <p className="mt-2 text-zinc-400 font-mono text-xs md:text-sm mb-4"> {/* Reduzi mb-8 para mb-4 */}
+                  FullStack Engineer • Nexus Eleva Co-Founder
+               </p>
+
+               {/* BOTÕES COMPACTOS */}
+               <div className="w-full max-w-md mx-auto mb-8"> {/* Reduzi mb-12 para mb-8 */}
+                  <ActionButtons />
+               </div>
+            </section>
 
 
-            {/* ÁREA DE CONTROLE (Passando os widgets como Props) */}
-            <section className="mb-8">
+            {/* BARRA DE CONTROLE (NEXUS CORE) */}
+            <section className="mb-4"> {/* Reduzi mb-6 para mb-4 */}
                <NexusControlPanel
-                  githubSlot={<GithubWidget />} // O Server Component passa o Widget pronto
+                  githubSlot={<GithubWidget />}
                   discordSlot={
-                     <>
+                     <div className="h-full flex flex-col gap-4">
                         <DiscordStatus />
-                        {/* Focus Card também pode vir aqui ou ficar dentro do componente se for estático */}
-                        <div className="p-4 bg-zinc-900/40 border border-yellow-500/20 rounded-xl hover:border-yellow-500/50 transition-colors mt-4">
+                        <div className="flex-1 p-4 bg-zinc-900/40 border border-yellow-500/20 rounded-xl hover:border-yellow-500/50 transition-colors flex flex-col justify-center">
                            <div className="flex items-center gap-2 mb-2 text-yellow-500 text-xs font-mono font-bold uppercase">
                               <span className="w-2 h-2 bg-yellow-500 rounded-full animate-ping" />
                               Current_Focus
                            </div>
                            <p className="text-sm text-zinc-300">
-                              Otimizando algoritmos de <strong>OCR (Tesseract)</strong> e arquitetura escalável para a <strong>Nexus Eleva</strong>.
+                              Otimizando algoritmos de <strong>OCR</strong> para a <strong>Nexus Eleva</strong>.
                            </p>
                         </div>
-                     </>
+                     </div>
                   }
                />
             </section>
 
 
-            {/* TECH STACK */}
-            <section className="mb-20">
+            {/* BARRA DE STACKS */}
+            <section className="mb-12"> {/* Reduzi mb-24 para mb-12 */}
                <TechStack />
             </section>
 
 
             {/* FOOTER */}
-            <footer className="text-center text-zinc-600 text-[10px] font-mono py-6 border-t border-zinc-900">
-               <p>SYSTEM_ID: NEXUS_V3.0 // OPERATIONAL</p>
+            <footer className="text-center text-zinc-600 text-[10px] font-mono py-4 border-t border-zinc-900/50">
+               <p>SYSTEM_ID: NEXUS_V3.1 // READY</p>
             </footer>
 
          </div>
 
-         {/* TERMINAL GLOBAL */}
          <GeminiTerminal />
 
       </main>
