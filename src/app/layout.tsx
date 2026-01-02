@@ -9,7 +9,6 @@ import { SoundManager } from "@/components/SoundManager";
 
 import { CommandMenu } from "@/components/CommandMenu";
 import { KonamiWrapper } from "@/components/KonamiWrapper";
-import { TerminalModal } from "@/components/TerminalModal";
 import { MatrixRain } from "@/components/MatrixRain";
 
 // Configuração de fontes otimizadas
@@ -84,8 +83,6 @@ export default function RootLayout({
         {/* Camada 4: Conteúdo da Página */}
         {children}
 
-        {/* Camada 5: Elementos Flutuantes (Overlay) */}
-        <TerminalModal />
       </body>
     </html>
   );

@@ -3,9 +3,6 @@ import Link from "next/link";
 import { Youtube } from "lucide-react";
 
 // --- COMPONENTES VISUAIS ---
-import { MatrixRain } from "@/components/MatrixRain";
-import { CommandMenu } from "@/components/CommandMenu";
-import { GeminiTerminal } from "@/components/GeminiTerminal";
 import { TechStack } from "@/components/TechStack";
 import { SpotifyWidget } from "@/components/SpotifyWidget";
 import { BinaryClock } from "@/components/BinaryClock";
@@ -17,13 +14,11 @@ import { ActionButtons } from "@/components/ActionButtons";
 import { NexusControlPanel } from "@/components/NexusControlPanel";
 import { GithubWidget } from "@/components/GithubWidget";
 import { DiscordStatus } from "@/components/DiscordStatus";
+import { ConsoleTerminal } from "@/components/ConsoleTerminal";
 
 export default function Home() {
    return (
       <main className="min-h-screen bg-black text-zinc-200 selection:bg-purple-500/30 relative overflow-x-hidden pb-20"> {/* Reduzi pb-32 para pb-20 */}
-
-         <MatrixRain />
-         <CommandMenu />
 
          {/* --- HUD FIXO --- */}
          {/* Top Left */}
@@ -131,9 +126,7 @@ export default function Home() {
             </footer>
 
          </div>
-
-         <GeminiTerminal />
-
+         <ConsoleTerminal />
       </main>
    );
 }

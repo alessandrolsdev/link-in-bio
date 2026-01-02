@@ -1,21 +1,18 @@
 "use client";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useRef, useState } from "react";
 import { 
-  Linkedin, 
-  Mail, 
-  FileText, 
-  Github, 
-  Globe, 
-  ArrowUpRight 
+  Linkedin, Mail, FileText, Github, Globe, ArrowUpRight 
 } from "lucide-react";
 
+// --- DADOS DOS LINKS ---
 const links = [
   {
     label: "NEXUS ELEVA",
     sub: "Software House & Solutions",
     url: "https://nexuseleva.com.br",
-    icon: <Globe size={18} />, // Reduzi de 20 para 18
+    icon: <Globe size={18} />,
     color: "hover:border-purple-500 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]",
     bg: "bg-purple-500/10",
     text: "text-purple-400"
@@ -32,7 +29,7 @@ const links = [
   {
     label: "LINKEDIN",
     sub: "Professional Network",
-    url: "https://linkedin.com/in/seu-linkedin",
+    url: "https://linkedin.com/in/alessandrolsdev",
     icon: <Linkedin size={18} />,
     color: "hover:border-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]",
     bg: "bg-blue-500/10",
@@ -50,7 +47,7 @@ const links = [
   {
     label: "CONTATO",
     sub: "Vamos construir algo?",
-    url: "mailto:seuemail@gmail.com",
+    url: "mailto:alessandrolsdev@gmail.com",
     icon: <Mail size={18} />,
     color: "hover:border-yellow-500 hover:shadow-[0_0_20px_rgba(234,179,8,0.3)]",
     bg: "bg-yellow-500/10",
@@ -58,22 +55,48 @@ const links = [
   }
 ];
 
+// --- COMPONENTE MAGNÉTICO INDIVIDUAL ---
+const MagneticButton = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+    const ref = useRef<HTMLDivElement>(null);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+
+    const handleMouse = (e: React.MouseEvent) => {
+        const { clientX, clientY } = e;
+        const { height, width, left, top } = ref.current!.getBoundingClientRect();
+        const middleX = clientX - (left + width / 2);
+        const middleY = clientY - (top + height / 2);
+        setPosition({ x: middleX * 0.1, y: middleY * 0.1 }); // Intensidade do ímã
+    };
+
+    const reset = () => setPosition({ x: 0, y: 0 });
+
+    const { x, y } = position;
+    return (
+        <motion.div
+            ref={ref}
+            onMouseMove={handleMouse}
+            onMouseLeave={reset}
+            animate={{ x, y }}
+            transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
+            className={className}
+        >
+            {children}
+        </motion.div>
+    );
+};
+
 export const ActionButtons = () => {
   return (
-    // Reduzi mt-6 para mt-4 e gap-3 para gap-2
     <div className="flex flex-col gap-2 w-full max-w-sm mx-auto mt-4">
       {links.map((link, i) => (
         <Link href={link.url} key={i} target="_blank" className="w-full group">
-          <motion.div
-            whileHover={{ scale: 1.02, x: 5 }}
-            whileTap={{ scale: 0.98 }}
+          <MagneticButton
             className={`
-              relative flex items-center justify-between p-3 rounded-xl border border-zinc-800/60 bg-zinc-900/40 backdrop-blur-sm transition-all duration-300
+              relative flex items-center justify-between p-3 rounded-xl border border-zinc-800/60 bg-zinc-900/40 backdrop-blur-sm transition-colors duration-300
               ${link.color}
             `}
           >
             <div className="flex items-center gap-3">
-              {/* Padding do ícone reduzido de p-2.5 para p-2 */}
               <div className={`p-2 rounded-lg ${link.bg} ${link.text}`}>
                 {link.icon}
               </div>
@@ -91,7 +114,7 @@ export const ActionButtons = () => {
                <ArrowUpRight size={16} />
             </div>
 
-          </motion.div>
+          </MagneticButton>
         </Link>
       ))}
     </div>
