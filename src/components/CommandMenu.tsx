@@ -51,11 +51,11 @@ export const CommandMenu = () => {
         </Command.Empty>
 
         <Command.Group heading="Ações Rápidas" className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest mb-2 px-2">
-          <Item onSelect={() => runCommand(() => window.open('https://wa.me/SEU_NUMERO', '_blank'))}>
+          <Item onSelect={() => runCommand(() => window.open('https://wa.me/5567991710135', '_blank'))}>
             <Rocket className="w-4 h-4 mr-2" />
             Orçar Projeto
           </Item>
-          <Item onSelect={() => runCommand(() => { navigator.clipboard.writeText('seuemail@gmail.com'); alert('Email copiado!'); })}>
+          <Item onSelect={() => runCommand(() => { navigator.clipboard.writeText('alessandrolsdev@gmail.com'); alert('Email copiado!'); })}>
             <Copy className="w-4 h-4 mr-2" />
             Copiar Email
           </Item>
@@ -66,7 +66,7 @@ export const CommandMenu = () => {
             <Github className="w-4 h-4 mr-2" />
             GitHub
           </Item>
-          <Item onSelect={() => runCommand(() => window.open('https://linkedin.com', '_blank'))}>
+          <Item onSelect={() => runCommand(() => window.open('https://linkedin.com/in/alessandrolsdev', '_blank'))}>
             <Linkedin className="w-4 h-4 mr-2" />
             LinkedIn
           </Item>
