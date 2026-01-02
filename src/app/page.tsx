@@ -44,7 +44,7 @@ export default function Home() {
 
          <div className="fixed bottom-6 right-6 z-40 hidden lg:block">
             <Link
-               href="https://youtube.com/playlist?list=SUA_PLAYLIST"
+               href="https://youtube.com/playlist?list=PLcR6p6Bc6b2j1iNtPLXp-Ja9CkgUWkXOg"
                target="_blank"
                className="flex items-center gap-3 p-3 bg-black/80 border border-red-900/50 rounded-lg text-red-500 hover:bg-red-900/20 hover:border-red-500 transition-all group backdrop-blur-md"
             >
