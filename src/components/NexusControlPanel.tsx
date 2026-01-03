@@ -8,14 +8,23 @@ import {
   Zap 
 } from "lucide-react";
 
-// Removemos os imports do GithubWidget e DiscordStatus daqui!
-// Eles virão prontos de fora.
-
+/**
+ * Propriedades do NexusControlPanel.
+ */
 interface NexusControlPanelProps {
-  githubSlot: React.ReactNode;  // Espaço para o Widget do GitHub
-  discordSlot: React.ReactNode; // Espaço para o Widget do Discord/Foco
+  /** Espaço para o Widget do GitHub */
+  githubSlot: React.ReactNode;
+  /** Espaço para o Widget do Discord/Foco */
+  discordSlot: React.ReactNode;
 }
 
+/**
+ * Componente NexusControlPanel.
+ * Um painel expansível estilo "Dashboard" que agrupa widgets secundários.
+ * Permite manter a UI limpa, escondendo detalhes técnicos quando não solicitados.
+ *
+ * @param {NexusControlPanelProps} props - Slots para injeção de dependência dos widgets.
+ */
 export const NexusControlPanel = ({ githubSlot, discordSlot }: NexusControlPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 

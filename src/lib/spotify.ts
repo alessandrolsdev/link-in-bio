@@ -37,15 +37,41 @@ const getAccessToken = async () => {
  * Primeiro renova o token de acesso e depois consulta a API do Player.
  * Utiliza cache de curta duração (30s) para manter a interface quase real-time.
  * 
- * @returns {Promise<Response>} Resposta da API do Spotify.
+ * @returns {Promise<Object | null>} Objeto com as informações da música ou null se não houver música tocando.
  */
 export const getNowPlaying = async () => {
   const { access_token } = await getAccessToken();
 
-  return fetch(NOW_PLAYING_ENDPOINT, {
+  const response = await fetch(NOW_PLAYING_ENDPOINT, {
     headers: {
       Authorization: `Bearer ${access_token}`,
     },
     next: { revalidate: 30 }
   });
+
+  if (response.status === 204 || response.status > 400) {
+    return null;
+  }
+
+  const song = await response.json();
+
+  if (!song || !song.item) {
+      return null;
+  }
+
+  const isPlaying = song.is_playing;
+  const title = song.item.name;
+  const artist = song.item.artists.map((_artist: any) => _artist.name).join(', ');
+  const album = song.item.album.name;
+  const albumArt = song.item.album.images[0].url;
+  const songUrl = song.item.external_urls.spotify;
+
+  return {
+    album,
+    albumArt,
+    artist,
+    isPlaying,
+    songUrl,
+    title,
+  };
 };

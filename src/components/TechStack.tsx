@@ -2,50 +2,58 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
+  Terminal,
   Cpu, 
-  Database, 
-  LayoutTemplate, 
-  Server, 
-  Bot,
-  Zap,
+  Layers,
+  Globe,
+  Database,
   ChevronDown,
-  Layers
+  Zap,
+  Code
 } from "lucide-react";
 
-// Dados das Stacks (Mantivemos os mesmos)
+// DADOS DO STACK (Hardcoded para demonstração, idealmente viria de uma config)
 const stackCategories = [
   {
     title: "FRONTEND",
-    icon: <LayoutTemplate size={14} className="text-blue-400" />,
+    icon: <Globe size={14} className="text-blue-400" />,
     items: [
-      { name: "Next.js 14", desc: "App Router & SSR" },
-      { name: "React 18", desc: "Component Based" },
-      { name: "Tailwind", desc: "Utility First CSS" },
-      { name: "Framer", desc: "Motion Library" }
+      { name: "Next.js 14", desc: "App Router & Server Actions" },
+      { name: "React", desc: "Hooks & Custom Context" },
+      { name: "Tailwind CSS", desc: "Utility-First Styling" },
+      { name: "Framer Motion", desc: "Complex Animations" }
     ]
   },
   {
-    title: "BACKEND",
-    icon: <Server size={14} className="text-green-400" />,
+    title: "BACKEND & DATA",
+    icon: <Database size={14} className="text-green-400" />,
     items: [
-      { name: "FastAPI", desc: "Python Async" },
-      { name: "Node.js", desc: "Event Loop" },
-      { name: "Postgres", desc: "Relational DB" },
-      { name: "Redis", desc: "In-Memory Cache" }
+      { name: "Node.js", desc: "Runtime Environment" },
+      { name: "PostgreSQL", desc: "Relational Database" },
+      { name: "Prisma", desc: "ORM & Type Safety" },
+      { name: "Redis", desc: "Caching Strategy" }
     ]
   },
   {
-    title: "AI & AUTO",
-    icon: <Bot size={14} className="text-yellow-400" />,
+    title: "TOOLS & DEVOPS",
+    icon: <Cpu size={14} className="text-orange-400" />,
     items: [
-      { name: "OpenCV", desc: "Computer Vision" },
-      { name: "Tesseract", desc: "OCR Engine" },
-      { name: "Python", desc: "Scripting / RPA" },
-      { name: "Gemini", desc: "Generative AI" }
+      { name: "Docker", desc: "Containerization" },
+      { name: "Git/GitHub", desc: "Version Control" },
+      { name: "Vercel", desc: "CI/CD Deployment" },
+      { name: "Gemini AI", desc: "Generative AI" }
     ]
   }
 ];
 
+/**
+ * Componente TechStack (Expansível).
+ * Exibe as tecnologias utilizadas no projeto ou conhecidas pelo desenvolvedor.
+ * Organizado em categorias (Frontend, Backend, DevOps).
+ * Apresenta uma interface compacta inicial que se expande ao clicar.
+ *
+ * @returns {JSX.Element} O componente Tech Stack.
+ */
 export const TechStack = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 

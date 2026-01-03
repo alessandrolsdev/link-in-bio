@@ -12,6 +12,10 @@ import { useEffect } from "react";
  */
 export const CursorTracker = () => {
   useEffect(() => {
+    /**
+     * Atualiza as variáveis CSS com as coordenadas do mouse.
+     * @param {MouseEvent} e - Evento de movimento do mouse.
+     */
     const updateMouse = (e: MouseEvent) => {
       document.body.style.setProperty("--mouse-x", `${e.clientX}px`);
       document.body.style.setProperty("--mouse-y", `${e.clientY}px`);

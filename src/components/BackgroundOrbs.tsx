@@ -4,7 +4,10 @@ import { motion } from "framer-motion";
 /**
  * Componente de Fundo Animado (Orbs).
  * Renderiza esferas de luz difusa que se movem suavemente ao fundo para criar ambiência.
- * Utiliza Framer Motion para animações contínuas e infinitas.
+ * Utiliza Framer Motion para animações contínuas e infinitas (loop).
+ * As esferas alteram sua posição (x, y) e escala (scale) ciclicamente.
+ *
+ * @returns {JSX.Element} O componente visual de fundo.
  */
 export const BackgroundOrbs = () => {
   return (

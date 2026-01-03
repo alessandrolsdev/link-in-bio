@@ -1,68 +1,78 @@
-import React from 'react';
-import { getNowPlaying } from '@/lib/spotify';
-import Image from 'next/image';
-import { Music } from 'lucide-react';
+import { getNowPlaying } from "@/lib/spotify";
+import { Music, Disc3 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 /**
- * Widget "Listening Now" do Spotify.
- * Exibe a música que o usuário está ouvindo no momento (via Spotify API).
- * Se não houver música tocando, exibe um estado offline discreto ou nada.
+ * Widget do Spotify (Real-Time).
+ * Busca o que o usuário está ouvindo agora na API do Spotify.
+ * Se nada estiver tocando, exibe a última música ou uma mensagem padrão.
+ * Renderizado no servidor para performance e SEO.
+ *
+ * @returns {JSX.Element | null} O widget do Spotify ou null se não houver dados.
  */
 export const SpotifyWidget = async () => {
-  // Busca dados em tempo real (Server Component)
-  const response = await getNowPlaying();
+  const data = await getNowPlaying();
 
-  // Tratamento para quando não há musica tocando ou erro na API
-  if (response.status === 204 || response.status > 400) {
-    return (
-      <div className="w-full flex items-center gap-4 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 opacity-70">
-        <Music className="text-zinc-600" />
-        <span className="text-xs font-mono text-zinc-500">SPOTIFY: OFFLINE</span>
-      </div>
-    );
-  }
+  // Se não houver dados, retorna null ou estado vazio (opcional)
+  if (!data) return null;
 
-  const song = await response.json();
-  const isPlaying = song.is_playing;
-  const title = song.item.name;
-  const artist = song.item.artists.map((_artist: any) => _artist.name).join(', ');
-  const albumArt = song.item.album.images[0].url;
-  const songUrl = song.item.external_urls.spotify;
+  const isPlaying = data.isPlaying;
 
   return (
-    <a
-      href={songUrl}
+    <Link
+      href={data.songUrl || "#"}
       target="_blank"
-      rel="noopener noreferrer"
-      className="w-full group relative flex items-center gap-4 p-4 rounded-xl bg-zinc-900/80 border border-zinc-800 hover:border-[#1DB954] transition-all overflow-hidden"
+      className="group relative flex items-center gap-4 overflow-hidden rounded-xl bg-zinc-900/60 p-4 border border-white/5 transition-all hover:bg-zinc-800/80 hover:border-green-500/30 hover:shadow-[0_0_20px_rgba(34,197,94,0.1)]"
     >
-      {/* Background Glow (Verde Spotify) */}
-      <div className="absolute inset-0 bg-[#1DB954] opacity-0 group-hover:opacity-5 transition-opacity" />
 
-      {/* Arte do Álbum (Vinil Girando) */}
-      <div className={`relative w-12 h-12 rounded-full overflow-hidden border border-white/10 ${isPlaying ? 'animate-[spin_4s_linear_infinite]' : ''}`}>
-        <Image src={albumArt} alt={title} fill className="object-cover" />
-        <div className="absolute inset-0 w-3 h-3 m-auto bg-zinc-900 rounded-full border border-zinc-700" /> {/* Furo central do vinil */}
+      {/* Background Glow (Aura Verde) */}
+      <div className="absolute -left-10 -top-10 h-32 w-32 rounded-full bg-green-500 opacity-5 blur-[50px] transition-opacity group-hover:opacity-10" />
+
+      {/* Capa do Álbum (com animação de vinil girando se estiver tocando) */}
+      <div className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-zinc-800 shadow-xl ${isPlaying ? 'animate-spin-slow' : ''}`}>
+         {data.albumArt ? (
+            <Image
+                src={data.albumArt}
+                alt={data.album}
+                fill
+                className="object-cover"
+            />
+         ) : (
+            <div className="w-full h-full bg-zinc-800 flex items-center justify-center">
+                <Disc3 className="text-zinc-600" />
+            </div>
+         )}
+         {/* Furo do Vinil */}
+         <div className="absolute inset-0 m-auto w-4 h-4 bg-zinc-900 rounded-full border border-zinc-700" />
       </div>
 
-      <div className="flex flex-col flex-1 min-w-0">
-        <div className="flex items-center justify-between">
-          <span className="text-[9px] font-mono text-[#1DB954] font-bold tracking-widest mb-1">
-            LISTENING NOW
-          </span>
-          {/* Animação de Equalizador (Barras pulando) */}
-          {isPlaying && (
-            <div className="flex gap-[2px] items-end h-3">
-              <span className="w-1 bg-[#1DB954] animate-[bounce_1s_infinite] h-2"></span>
-              <span className="w-1 bg-[#1DB954] animate-[bounce_1.2s_infinite] h-3"></span>
-              <span className="w-1 bg-[#1DB954] animate-[bounce_0.8s_infinite] h-1"></span>
-            </div>
-          )}
+      {/* Equalizador Animado (Só aparece se tocando) */}
+      {isPlaying && (
+          <div className="absolute bottom-4 right-4 flex gap-1 items-end h-4">
+              <div className="w-1 bg-green-500 animate-[music-bar_1s_ease-in-out_infinite]" style={{ animationDelay: '0ms' }} />
+              <div className="w-1 bg-green-500 animate-[music-bar_1s_ease-in-out_infinite]" style={{ animationDelay: '200ms' }} />
+              <div className="w-1 bg-green-500 animate-[music-bar_1s_ease-in-out_infinite]" style={{ animationDelay: '400ms' }} />
+          </div>
+      )}
+
+      {/* Informações da Música */}
+      <div className="flex flex-col min-w-0 z-10">
+        <div className="flex items-center gap-2 mb-1">
+            <Music size={12} className={isPlaying ? "text-green-500" : "text-zinc-500"} />
+            <span className="text-[9px] font-mono uppercase tracking-widest text-zinc-400">
+                {isPlaying ? "Now Playing" : "Offline / Last Played"}
+            </span>
         </div>
 
-        <h3 className="text-sm font-bold text-white truncate font-sans">{title}</h3>
-        <p className="text-xs text-zinc-400 truncate font-mono">{artist}</p>
+        <h3 className="truncate font-bold text-zinc-100 text-sm group-hover:text-green-400 transition-colors">
+            {data.title || "Silence..."}
+        </h3>
+        <p className="truncate text-xs text-zinc-500 font-mono">
+            {data.artist || "Spotify Disconnected"}
+        </p>
       </div>
-    </a>
+
+    </Link>
   );
 };

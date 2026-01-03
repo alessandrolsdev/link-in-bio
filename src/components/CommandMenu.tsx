@@ -1,96 +1,176 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { Command } from "cmdk";
-import { Github, Linkedin, Mail, Rocket, Music, Copy } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Dialog } from "@headlessui/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Terminal, X, Zap, ChevronRight, Activity } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 /**
- * Menu de Comandos Global (Command Palette).
- * Acessível via Ctrl+K ou Cmd+K, permitindo navegação rápida e execução de ações.
- * Utiliza a biblioteca `cmdk` para acessibilidade e composição.
+ * Propriedades do CommandMenu.
+ */
+interface CommandMenuProps {
+  /** Função para fechar o modal, se necessário. */
+  onClose?: () => void;
+}
+
+/**
+ * Componente Command Menu (Cmd+K).
+ * Um menu modal acessível via atalho de teclado para ações rápidas.
+ *
+ * Implementa a interface de usuário para o "Chatbot IA" ou "Terminal de Comandos".
+ * Permite que o usuário interaja com a API `/api/chat`.
+ *
+ * @param {CommandMenuProps} props - Propriedades do componente.
  */
 export const CommandMenu = () => {
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // Escuta o evento de teclado para abrir/fechar o menu
+  // Histórico de mensagens para o chat (mock inicial)
+  const [history, setHistory] = useState([
+    { role: "system", text: "NEXUS_OS v2.0.4 initialized..." },
+    { role: "bot", text: "Olá. Eu sou o **NEXUS_AI**. Você pode me perguntar sobre meus projetos, skills ou carreira." }
+  ]);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Hook para detectar Ctrl+K ou Cmd+K
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
       if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        setOpen((open) => !open);
+        setIsOpen((open) => !open);
       }
     };
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const runCommand = (command: () => void) => {
-    setOpen(false);
-    command();
+  // Auto-scroll para a última mensagem
+  useEffect(() => {
+    if (scrollRef.current) {
+        scrollRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [history, isOpen]);
+
+  // Foca no input quando abre
+  useEffect(() => {
+    if (isOpen) {
+        setTimeout(() => inputRef.current?.focus(), 100);
+    }
+  }, [isOpen]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || loading) return;
+
+    const userMsg = input;
+    setInput("");
+    setHistory(prev => [...prev, { role: "user", text: userMsg }]);
+    setLoading(true);
+
+    try {
+        const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userMsg })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Erro na matrix");
+
+        setHistory(prev => [...prev, { role: "bot", text: data.reply }]);
+    } catch (error) {
+        setHistory(prev => [...prev, { role: "system", text: "⚠️ ERRO: Falha na conexão com o mainframe." }]);
+    } finally {
+        setLoading(false);
+    }
   };
 
   return (
-    <Command.Dialog
-      open={open}
-      onOpenChange={setOpen}
-      label="Global Command Menu"
-      className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[640px] w-full bg-zinc-900/90 border border-white/10 rounded-xl shadow-2xl backdrop-blur-xl z-[9999] overflow-hidden"
-    >
-      <div className="flex items-center border-b border-white/5 px-4">
-        <Command.Input
-          placeholder="O que você precisa?..."
-          className="w-full bg-transparent p-4 text-white placeholder:text-zinc-500 outline-none font-mono"
-        />
-        <div className="flex gap-1">
-          <kbd className="bg-zinc-800 text-zinc-400 px-2 py-1 rounded text-xs font-mono">ESC</kbd>
-        </div>
-      </div>
+    <>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            onClick={() => setIsOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-2xl h-[500px] flex flex-col bg-[#0c0c0c] border border-zinc-800 rounded-xl shadow-2xl overflow-hidden relative"
+            >
+                {/* SCANLINES DECORATIVAS */}
+                <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-10 bg-[length:100%_2px,3px_100%] opacity-20" />
 
-      <Command.List className="max-h-[300px] overflow-y-auto p-2 scrollbar-hide">
-        <Command.Empty className="p-4 text-center text-zinc-500 font-mono text-sm">
-          Nenhum comando encontrado.
-        </Command.Empty>
+                {/* HEADER */}
+                <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 border-b border-zinc-800 z-20">
+                    <div className="flex items-center gap-3">
+                        <Activity size={16} className="text-green-500" />
+                        <span className="text-xs font-mono text-zinc-300 tracking-widest">NEXUS_AI_CORE // ROOT_ACCESS</span>
+                    </div>
+                    <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-red-500 transition-colors">
+                        <X size={18} />
+                    </button>
+                </div>
 
-        <Command.Group heading="Ações Rápidas" className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest mb-2 px-2">
-          <Item onSelect={() => runCommand(() => window.open('https://wa.me/5567991710135', '_blank'))}>
-            <Rocket className="w-4 h-4 mr-2" />
-            Orçar Projeto
-          </Item>
-          <Item onSelect={() => runCommand(() => { navigator.clipboard.writeText('alessandrolsdev@gmail.com'); alert('Email copiado!'); })}>
-            <Copy className="w-4 h-4 mr-2" />
-            Copiar Email
-          </Item>
-        </Command.Group>
+                {/* AREA DE CHAT */}
+                <div className="flex-1 overflow-y-auto p-6 font-mono text-sm space-y-4 z-20 scrollbar-thin scrollbar-thumb-zinc-800 scrollbar-track-transparent">
+                    {history.map((msg, i) => (
+                        <div key={i} className={`flex gap-4 ${msg.role === "user" ? "flex-row-reverse" : ""}`}>
 
-        <Command.Group heading="Social" className="text-[10px] text-zinc-500 font-mono uppercase tracking-widest mb-2 px-2 mt-4">
-          <Item onSelect={() => runCommand(() => window.open('https://github.com/alessandrolsdev', '_blank'))}>
-            <Github className="w-4 h-4 mr-2" />
-            GitHub
-          </Item>
-          <Item onSelect={() => runCommand(() => window.open('https://linkedin.com/in/alessandrolsdev', '_blank'))}>
-            <Linkedin className="w-4 h-4 mr-2" />
-            LinkedIn
-          </Item>
-        </Command.Group>
+                            {/* Avatar / Ícone */}
+                            <div className={`shrink-0 w-8 h-8 rounded flex items-center justify-center border ${
+                                msg.role === "bot" ? "border-purple-500/30 bg-purple-500/10 text-purple-400" :
+                                msg.role === "system" ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-400" :
+                                "border-zinc-700 bg-zinc-800 text-zinc-300"
+                            }`}>
+                                {msg.role === "bot" ? <Zap size={14} /> : msg.role === "system" ? <Terminal size={14} /> : <ChevronRight size={14} />}
+                            </div>
 
-      </Command.List>
+                            {/* Mensagem */}
+                            <div className={`max-w-[80%] p-3 rounded ${
+                                msg.role === "user" ? "bg-zinc-800 text-zinc-200" :
+                                msg.role === "system" ? "text-yellow-500/90 font-bold" :
+                                "text-zinc-300 leading-relaxed"
+                            }`}>
+                                <ReactMarkdown>{msg.text}</ReactMarkdown>
+                            </div>
+                        </div>
+                    ))}
+                    {loading && <div className="text-green-500 text-xs animate-pulse pl-12">PROCESSING_DATA_PACKETS...</div>}
+                    <div ref={scrollRef} />
+                </div>
 
-      <div className="border-t border-white/5 p-2 bg-black/20 flex justify-between items-center px-4">
-        <span className="text-[10px] text-zinc-600 font-mono">Pro Tip: Use as setas para navegar</span>
-        <span className="text-[10px] text-zinc-600 font-mono">LINK-IN-BIO OS v1.0</span>
-      </div>
-    </Command.Dialog>
+                {/* INPUT AREA */}
+                <form onSubmit={handleSubmit} className="p-4 bg-black border-t border-zinc-800 z-20 flex items-center gap-3">
+                    <span className="text-green-500 font-bold text-lg">›</span>
+                    <input
+                        ref={inputRef}
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="Insira comando ou pergunta..."
+                        className="flex-1 bg-transparent border-none outline-none text-green-400 placeholder-zinc-700 font-mono text-base"
+                        autoComplete="off"
+                    />
+                    <div className="text-[10px] text-zinc-600 font-mono hidden md:block">
+                        PRESS ENTER
+                    </div>
+                </form>
+
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
-
-// Componente auxiliar para estilização unificada dos itens da lista
-const Item = ({ children, onSelect }: any) => {
-  return (
-    <Command.Item
-      onSelect={onSelect}
-      className="flex items-center px-3 py-3 rounded-lg text-sm text-zinc-300 hover:bg-neon/10 hover:text-neon aria-selected:bg-neon/10 aria-selected:text-neon cursor-pointer transition-colors group"
-    >
-      {children}
-      <span className="ml-auto opacity-0 group-hover:opacity-100 text-neon transition-opacity">↵</span>
-    </Command.Item>
-  )
-}

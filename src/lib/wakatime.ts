@@ -3,6 +3,7 @@ const WAKATIME_API_KEY = process.env.WAKATIME_API_KEY;
 /**
  * Busca estatísticas de programação do WakaTime.
  * Retorna dados agregados dos últimos 7 dias.
+ * A requisição é feita server-side para proteger a API Key.
  * 
  * @returns {Promise<any | null>} Objeto de dados do WakaTime ou null em caso de erro.
  */

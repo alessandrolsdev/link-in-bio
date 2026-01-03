@@ -4,13 +4,20 @@ import { useEffect, useRef, useState } from "react";
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@%&*!";
 
 /**
+ * Propriedades do componente HyperText.
+ */
+interface HyperTextProps {
+    /** O texto a ser exibido e animado. */
+    text: string;
+}
+
+/**
  * Componente de Texto Hiperativo (Matrix Effect).
  * Ao passar o mouse, o texto embaralha aleatoriamente antes de estabilizar na palavra original.
  * 
- * @param {Object} props
- * @param {string} props.text - O texto a ser exibido e animado.
+ * @param {HyperTextProps} props - Propriedades do componente.
  */
-export default function HyperText({ text }: { text: string }) {
+export default function HyperText({ text }: HyperTextProps) {
   const [displayText, setDisplayText] = useState(text);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 

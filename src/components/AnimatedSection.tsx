@@ -3,14 +3,23 @@ import { motion } from "framer-motion";
 import { ReactNode } from "react";
 
 /**
+ * Propriedades para o componente AnimatedSection.
+ */
+interface AnimatedSectionProps {
+  /** O conteúdo a ser animado. */
+  children: ReactNode;
+  /** O atraso (em segundos) antes de iniciar a animação. */
+  delay: number;
+}
+
+/**
  * Wrapper de Animação de Seção.
  * Aplica um efeito suave de entrada (fade-in + slide-up) para os elementos filhos.
+ * Utiliza o Framer Motion para controlar a opacidade, posição Y e filtro de desfoque.
  * 
- * @param {Object} props - As propriedades do componente.
- * @param {ReactNode} props.children - O conteúdo a ser animado.
- * @param {number} props.delay - O atraso (em segundos) antes de iniciar a animação.
+ * @param {AnimatedSectionProps} props - As propriedades do componente.
  */
-export const AnimatedSection = ({ children, delay }: { children: ReactNode; delay: number }) => {
+export const AnimatedSection = ({ children, delay }: AnimatedSectionProps) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20, filter: "blur(10px)" }} // Estado inicial: invisível, deslocado para baixo e desfocado

@@ -6,6 +6,8 @@ import { Youtube, PlayCircle } from "lucide-react";
  * Widget do YouTube.
  * Mostra o vídeo mais recente postado ou assistido (dependendo da lógica da API).
  * Busca metadados via função server-side `getLatestVideo`.
+ *
+ * @returns {JSX.Element | null} O widget do YouTube ou null.
  */
 export const YoutubeWidget = async () => {
   const video = await getLatestVideo();
@@ -59,4 +61,4 @@ export const YoutubeWidget = async () => {
       </div>
     </a>
   );
-};  
+};

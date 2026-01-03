@@ -19,7 +19,22 @@ const formatTime = (dateString: string) => {
   return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
 };
 
-export const GithubLogList = ({ events }: { events: GithubEvent[] }) => {
+/**
+ * Propriedades da lista de logs do GitHub.
+ */
+interface GithubLogListProps {
+  /** Array de eventos do GitHub a serem exibidos. */
+  events: GithubEvent[];
+}
+
+/**
+ * Componente GithubLogList.
+ * Exibe uma lista de atividades recentes do GitHub (commits, stars, PRs) estilizada como um log de sistema.
+ * Possui funcionalidade de expandir/recolher para mostrar mais detalhes.
+ *
+ * @param {GithubLogListProps} props - Propriedades do componente.
+ */
+export const GithubLogList = ({ events }: GithubLogListProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   // Se não tiver eventos, não renderiza nada

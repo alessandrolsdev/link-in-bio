@@ -4,6 +4,13 @@ import Image from "next/image";
  * Componente de Imagem com Efeito Glitch.
  * Renderiza uma imagem principal e duas camadas sobrepostas (ciano e magenta) com mix-blend-mode.
  * O efeito de glitch (tremor/distorção) é ativado via CSS no hover do container pai.
+ *
+ * Estrutura:
+ * 1. Camada Base: Imagem original visível.
+ * 2. Camada Ciano: Cópia da imagem com filtro de cor, deslocada ligeiramente na animação.
+ * 3. Camada Magenta: Cópia da imagem com filtro de cor oposto, deslocada inversamente.
+ *
+ * @returns {JSX.Element} O componente de imagem estilizado.
  */
 export const GlitchImage = () => {
   return (

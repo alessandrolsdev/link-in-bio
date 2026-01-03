@@ -6,6 +6,8 @@ import { Loader2, Gamepad2, Code } from "lucide-react";
  * Widget de Status do Discord.
  * Utiliza a API Lanyard para buscar o status em tempo real do usuário no Discord.
  * Exibe estado (Online, Offline, DND) e atividade atual (Jogando, Codando).
+ *
+ * @returns {JSX.Element} O widget de status do Discord.
  */
 export const DiscordStatus = () => {
   const { data: user, isLoading } = useLanyard();
