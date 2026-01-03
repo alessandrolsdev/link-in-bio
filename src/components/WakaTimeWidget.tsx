@@ -4,7 +4,9 @@ import { Code2, Clock } from "lucide-react";
 /**
  * Widget de Estatísticas de Código (WakaTime).
  * Exibe as linguagens mais utilizadas na última semana.
- * Utiliza dados da API do WakaTime.
+ * Utiliza dados da API do WakaTime (Server Component).
+ *
+ * @returns {JSX.Element | null} O widget com as stats de código ou null.
  */
 export const WakaTimeWidget = async () => {
     const stats = await getWakatimeStats();

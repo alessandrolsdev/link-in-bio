@@ -1,10 +1,19 @@
 import { getDailyProductivity } from "@/lib/github";
 import { Activity, Zap, Coffee, Skull, Leaf } from "lucide-react";
 
+/**
+ * Componente DevMood.
+ * Exibe o "humor" ou nível de produtividade do desenvolvedor baseado em dados do GitHub/WakaTime.
+ * Renderizado no servidor (Server Component) para buscar dados sem expor chaves de API.
+ *
+ * @returns {JSX.Element} O widget visual de humor do desenvolvedor.
+ */
 export const DevMood = async () => {
   const { score, level, color, message } = await getDailyProductivity();
 
-  // Escolhe o ícone baseado no nível
+  /**
+   * Escolhe o ícone apropriado baseado no nível de produtividade (score).
+   */
   const getIcon = () => {
     if (score === 0) return <Leaf size={18} />;
     if (score <= 5) return <Coffee size={18} />;

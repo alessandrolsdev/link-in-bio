@@ -1,27 +1,31 @@
 "use client";
 import { useEffect, useState } from "react";
-import useSound from "use-sound";
+// Removemos import de useSound pois não é usado aqui, mas no SoundManager
+// Se houvesse som aqui, seria mantido.
 
 /**
  * Hook personalizado para detectar o "Konami Code".
  * Sequência: ↑ ↑ ↓ ↓ ← → ← → B A
  * 
- * Ao completar a sequência, alterna a classe `.hacker-mode` no body, 
- * ativando efeitos visuais globais (Matrix Rain, fontes terminal, cores, etc).
+ * Ao detectar a sequência correta, ativa o modo "Hacker" (God Mode),
+ * alterando classes globais e emitindo um alerta visual.
  * 
- * @returns {boolean} Estado atual do modo hacker (ativo/inativo).
+ * @returns {boolean} Estado indicando se o modo hacker está ativo.
  */
 export const useKonami = () => {
-  const [isHackerMode, setIsHackerMode] = useState(false);
-  const konamiCode = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
   const [input, setInput] = useState<string[]>([]);
+  const [isHackerMode, setIsHackerMode] = useState(false);
 
-  // (Opcional) Som de sucesso ao ativar
-  // const [playUnlock] = useSound("/sounds/unlock.mp3"); 
+  const konamiCode = [
+    "ArrowUp", "ArrowUp",
+    "ArrowDown", "ArrowDown",
+    "ArrowLeft", "ArrowRight",
+    "ArrowLeft", "ArrowRight",
+    "b", "a"
+  ];
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Adiciona a tecla pressionada ao histórico
       const newInput = [...input, e.key];
 
       // Mantém o histórico apenas com o tamanho da sequência necessária

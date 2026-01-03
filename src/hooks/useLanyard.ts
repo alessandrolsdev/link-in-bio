@@ -11,7 +11,7 @@ const fetcher = (url: string) => fetch(url).then((res) => res.json());
  * Lanyard é um serviço WebSocket/REST que proxyia o status do Discord.
  * Utiliza SWR para data fetching com revalidação automática.
  * 
- * @returns {Object} { data, isLoading, isError }
+ * @returns {Object} { data, isLoading, isError } - O estado da requisição e os dados do usuário.
  */
 export const useLanyard = () => {
   const { data, error } = useSWR(

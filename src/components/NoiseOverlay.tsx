@@ -2,6 +2,8 @@
  * Overlay de Ruído (Film Grain).
  * Adiciona uma textura de ruído sutil sobre toda a aplicação para criar uma estética retro/analógica.
  * Utiliza um SVG de ruído como background e `pointer-events-none` para não bloquear interações.
+ *
+ * @returns {JSX.Element} O overlay visual.
  */
 export const NoiseOverlay = () => {
   return (

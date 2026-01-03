@@ -1,6 +1,10 @@
 import { Github, Users, GitFork, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
+/**
+ * Busca dados do perfil do usuário na API do GitHub.
+ * Utiliza revalidação ISR (Incremental Static Regeneration) a cada 1 hora.
+ */
 async function getGithubData() {
   try {
     const res = await fetch("https://api.github.com/users/alessandrolsdev", {
@@ -16,6 +20,13 @@ async function getGithubData() {
   }
 }
 
+/**
+ * Componente GithubWidget.
+ * Exibe um card estilo "hacker" com estatísticas gerais do perfil do GitHub (Repos, Seguidores).
+ * É um Server Component que busca dados de forma assíncrona.
+ *
+ * @returns {JSX.Element | null} O widget ou null se falhar a busca.
+ */
 export const GithubWidget = async () => {
   const user = await getGithubData();
 

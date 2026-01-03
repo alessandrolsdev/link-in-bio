@@ -1,4 +1,6 @@
-
+/**
+ * Interface que representa um evento do GitHub formatado para a UI.
+ */
 export interface GithubEvent {
   id: string;
   type: string;
@@ -7,6 +9,9 @@ export interface GithubEvent {
   message: string;
 }
 
+/**
+ * Interface que representa as estatísticas de produtividade calculadas.
+ */
 export interface ProductivityStats {
   score: number;
   level: string;
@@ -30,6 +35,12 @@ interface GithubApiEvent {
   };
 }
 
+/**
+ * Busca os eventos públicos mais recentes do GitHub do usuário.
+ * Utiliza fetch com cache de 60 segundos (Next.js Revalidation).
+ *
+ * @returns {Promise<GithubEvent[]>} Lista de eventos formatados.
+ */
 export async function getGithubEvents(): Promise<GithubEvent[]> {
   try {
     // Busca os últimos 15 eventos públicos do seu usuário
@@ -76,6 +87,12 @@ export async function getGithubEvents(): Promise<GithubEvent[]> {
 
 // --- NOVA FUNÇÃO DE PRODUTIVIDADE ---
 
+/**
+ * Calcula a "produtividade diária" baseada na atividade recente do GitHub.
+ * Define um nível de humor/energia para o widget DevMood.
+ *
+ * @returns {Promise<ProductivityStats>} Estatísticas e mensagens de status.
+ */
 export async function getDailyProductivity(): Promise<ProductivityStats> {
   try {
     // Busca os últimos 100 eventos para garantir que cobrimos o dia
@@ -112,7 +129,12 @@ export async function getDailyProductivity(): Promise<ProductivityStats> {
   }
 }
 
-// Função auxiliar interna
+/**
+ * Função auxiliar interna para determinar o "Humor" com base no score.
+ *
+ * @param {number} score - Pontuação de produtividade calculada.
+ * @returns {ProductivityStats} Objeto com nível, cor e mensagem.
+ */
 function calculateMood(score: number): ProductivityStats {
   if (score === 0) return {
     score,

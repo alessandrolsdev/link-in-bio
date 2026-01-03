@@ -5,6 +5,7 @@ const YOUTUBE_API_URL = "https://www.googleapis.com/youtube/v3/playlistItems";
 /**
  * Busca o vídeo mais recente de uma playlist espefícica do YouTube.
  * Útil para mostrar o último vídeo publicado ou uma playlist de curadoria.
+ * Utiliza a API Data v3 do Google.
  * 
  * @returns {Promise<{title: string, channel: string, url: string, thumbnail: string} | null>} Metadados do vídeo.
  */

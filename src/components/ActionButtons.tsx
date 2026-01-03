@@ -56,10 +56,32 @@ const links = [
 ];
 
 // --- COMPONENTE MAGNÉTICO INDIVIDUAL ---
-const MagneticButton = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+
+/**
+ * Interface para as props do MagneticButton.
+ */
+interface MagneticButtonProps {
+    children: React.ReactNode;
+    className?: string;
+}
+
+/**
+ * Componente Botão Magnético.
+ * Aplica um efeito de atração magnética ao cursor do mouse quando ele se aproxima do botão.
+ * Utiliza Framer Motion para suavizar o movimento.
+ *
+ * @param {MagneticButtonProps} props - Propriedades do botão.
+ * @param {React.ReactNode} props.children - Conteúdo do botão.
+ * @param {string} [props.className] - Classes CSS adicionais.
+ */
+const MagneticButton = ({ children, className }: MagneticButtonProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
 
+    /**
+     * Calcula a posição do mouse relativa ao centro do botão e atualiza o estado `position`.
+     * O efeito é multiplicado por 0.1 para controlar a intensidade.
+     */
     const handleMouse = (e: React.MouseEvent) => {
         const { clientX, clientY } = e;
         const { height, width, left, top } = ref.current!.getBoundingClientRect();
@@ -85,6 +107,11 @@ const MagneticButton = ({ children, className }: { children: React.ReactNode, cl
     );
 };
 
+/**
+ * Componente ActionButtons.
+ * Renderiza uma lista de botões de ação (links sociais, currículo, etc.) com efeito magnético.
+ * Os dados são estáticos definidos na constante `links`.
+ */
 export const ActionButtons = () => {
   return (
     <div className="flex flex-col gap-2 w-full max-w-sm mx-auto mt-4">
