@@ -7,7 +7,6 @@ import { NoiseOverlay } from "@/components/NoiseOverlay";
 import { BackgroundOrbs } from "@/components/BackgroundOrbs";
 import { SoundManager } from "@/components/SoundManager";
 
-import { CommandMenu } from "@/components/CommandMenu";
 import { KonamiWrapper } from "@/components/KonamiWrapper";
 import { MatrixRain } from "@/components/MatrixRain";
 
@@ -77,8 +76,7 @@ export default function RootLayout({
         <SoundManager />
         <KonamiWrapper />
 
-        {/* Camada 3: Componentes de Interface Globais */}
-        <CommandMenu />
+
 
         {/* Camada 4: Conteúdo da Página */}
         {children}

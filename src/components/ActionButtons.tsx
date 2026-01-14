@@ -1,19 +1,22 @@
 "use client";
-import Link from "next/link";
+
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Linkedin, Mail, FileText, Github, Globe, 
+  Linkedin, Mail, Github, Globe, 
   ChevronDown, MessageCircle, Instagram, ExternalLink,
   Layers, Rocket, Smartphone
 } from "lucide-react";
+
+// --- IMPORTANTE: Trocamos o Link nativo pelo nosso Rastreador ---
+import { TrackedLink } from "@/components/TrackedLink";
 
 // --- TIPOS DE DADOS ---
 type SubLink = {
   label: string;
   url: string;
   icon?: React.ReactNode;
-  badge?: string; // Ex: "Online", "Beta"
+  badge?: string; 
 };
 
 type ActionItem = {
@@ -21,8 +24,8 @@ type ActionItem = {
   label: string;
   sub: string;
   type: "link" | "group";
-  url?: string; // Só se for link direto
-  links?: SubLink[]; // Só se for grupo
+  url?: string; 
+  links?: SubLink[]; 
   icon: React.ReactNode;
   color: string;
   bg: string;
@@ -54,7 +57,7 @@ const items: ActionItem[] = [
     links: [
       { 
         label: "NOMAD Fintech", 
-        url: "https://nomad-api-cf.vercel.app", // Coloque o link real
+        url: "https://nomad-api-cf.vercel.app", 
         icon: <Layers size={14} />,
         badge: "LIVE"
       },
@@ -123,7 +126,6 @@ const items: ActionItem[] = [
 ];
 
 export const ActionButtons = () => {
-  // Estado para saber qual botão está expandido (null = nenhum)
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const toggleExpand = (id: string) => {
@@ -152,7 +154,6 @@ export const ActionButtons = () => {
               </div>
             </div>
 
-            {/* Ícone da Direita (Seta ou Chevron) */}
             <div className={`text-zinc-500 transition-transform duration-300 ${isExpanded ? "rotate-180" : ""}`}>
                {item.type === "group" ? (
                  <ChevronDown size={16} />
@@ -166,9 +167,15 @@ export const ActionButtons = () => {
         return (
           <div key={item.id} className="w-full relative group">
             
-            {/* --- SE FOR LINK DIRETO --- */}
+            {/* --- SE FOR LINK DIRETO (Usamos TrackedLink) --- */}
             {item.type === "link" ? (
-              <Link href={item.url!} target="_blank">
+              <TrackedLink 
+                href={item.url!} 
+                eventName={`click_${item.id}`} // Ex: click_github, click_nexus
+                eventData={{ type: "main_button", label: item.label }}
+                target="_blank"
+                className="block" // Importante para o motion.div preencher o espaço
+              >
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -176,15 +183,15 @@ export const ActionButtons = () => {
                 >
                   <MainButtonContent />
                 </motion.div>
-              </Link>
+              </TrackedLink>
             ) : (
-              // --- SE FOR GRUPO EXPANSÍVEL ---
+              // --- SE FOR GRUPO EXPANSÍVEL (Mantém lógica original) ---
               <motion.div
-                layout // Animação suave de layout
+                layout 
                 onClick={() => toggleExpand(item.id)}
                 className={`
-                   relative overflow-hidden rounded-xl border border-zinc-800/60 bg-zinc-900/40 backdrop-blur-sm transition-all duration-300 cursor-pointer
-                   ${isExpanded ? "border-zinc-600 bg-zinc-900/80" : item.color}
+                  relative overflow-hidden rounded-xl border border-zinc-800/60 bg-zinc-900/40 backdrop-blur-sm transition-all duration-300 cursor-pointer
+                  ${isExpanded ? "border-zinc-600 bg-zinc-900/80" : item.color}
                 `}
               >
                 {/* Cabeçalho do Grupo */}
@@ -192,7 +199,7 @@ export const ActionButtons = () => {
                    <MainButtonContent />
                 </div>
 
-                {/* Conteúdo Expansível (Sub-links) */}
+                {/* Conteúdo Expansível (Sub-links com TrackedLink) */}
                 <AnimatePresence>
                   {isExpanded && (
                     <motion.div
@@ -203,22 +210,34 @@ export const ActionButtons = () => {
                     >
                       <div className="p-2 space-y-1">
                         {item.links?.map((subLink, idx) => (
-                          <Link key={idx} href={subLink.url} target="_blank" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-800/50 transition-colors group/sub">
-                              <div className="flex items-center gap-2 text-zinc-400 group-hover/sub:text-white">
-                                {subLink.icon}
-                                <span className="text-xs font-mono">{subLink.label}</span>
-                              </div>
-                              {subLink.badge && (
-                                <span className={`text-[9px] px-1.5 py-0.5 rounded border ${
-                                    subLink.badge === "LIVE" ? "border-green-500/30 text-green-400 bg-green-500/10" : 
-                                    "border-yellow-500/30 text-yellow-400 bg-yellow-500/10"
-                                }`}>
-                                    {subLink.badge}
-                                </span>
-                              )}
-                            </div>
-                          </Link>
+                          // Wrapper div para impedir propagação do clique (não fechar o menu)
+                          <div 
+                            key={idx} 
+                            onClick={(e) => e.stopPropagation()}
+                            className="block"
+                          >
+                              <TrackedLink 
+                                href={subLink.url} 
+                                eventName={`click_${item.id}_sub`} // Ex: click_projects_sub
+                                eventData={{ sub_label: subLink.label, parent: item.id }}
+                                target="_blank"
+                              >
+                                <div className="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-800/50 transition-colors group/sub cursor-pointer">
+                                  <div className="flex items-center gap-2 text-zinc-400 group-hover/sub:text-white">
+                                    {subLink.icon}
+                                    <span className="text-xs font-mono">{subLink.label}</span>
+                                  </div>
+                                  {subLink.badge && (
+                                    <span className={`text-[9px] px-1.5 py-0.5 rounded border ${
+                                        subLink.badge === "LIVE" ? "border-green-500/30 text-green-400 bg-green-500/10" : 
+                                        "border-yellow-500/30 text-yellow-400 bg-yellow-500/10"
+                                    }`}>
+                                        {subLink.badge}
+                                    </span>
+                                  )}
+                                </div>
+                              </TrackedLink>
+                          </div>
                         ))}
                       </div>
                     </motion.div>

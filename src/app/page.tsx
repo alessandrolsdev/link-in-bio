@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link";
+// import Link from "next/link"; <--- REMOVIDO (Substituído pelo TrackedLink onde necessário)
 import { Youtube, Activity } from "lucide-react";
 
 // --- COMPONENTES VISUAIS ---
@@ -9,19 +9,21 @@ import { BinaryClock } from "@/components/BinaryClock";
 import { GithubLog } from "@/components/GithubLog";
 import { DevMood } from "@/components/DevMood"; 
 import { ActionButtons } from "@/components/ActionButtons";
-import { ConsoleTerminal } from "@/components/ConsoleTerminal"; // Terminal Quake (Opcional, se quiser manter)
+import { ConsoleTerminal } from "@/components/ConsoleTerminal"; 
 
 // --- WIDGETS PARA OS SLOTS ---
 import { NexusControlPanel } from "@/components/NexusControlPanel";
 import { GithubWidget } from "@/components/GithubWidget"; 
 import { DiscordStatus } from "@/components/DiscordStatus"; 
 
+// --- TELEMETRIA ---
+import { TrackedLink } from "@/components/TrackedLink"; // <--- NOVO IMPORT
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-zinc-200 selection:bg-purple-500/30 relative overflow-x-hidden pb-24">
       
       {/* --- HUD FIXO (APENAS DESKTOP) --- */}
-      {/* Estes continuam ocultos no mobile para não poluir a tela */}
       <div className="fixed top-6 left-6 z-40 hidden xl:flex flex-col gap-4 w-80">
          <DevMood />
          <div className="bg-black/80 p-3 rounded-xl border border-zinc-800/50 backdrop-blur-md">
@@ -40,9 +42,12 @@ export default function Home() {
          <SpotifyWidget />
       </div>
       
+      {/* LINK RASTREADO: SOUNDTRACK DESKTOP */}
       <div className="fixed bottom-6 right-6 z-40 hidden lg:block">
-         <Link 
+         <TrackedLink 
             href="https://youtube.com/playlist?list=PLcR6p6Bc6b2j1iNtPLXp-Ja9CkgUWkXOg" 
+            eventName="click_soundtrack"
+            eventData={{ origin: "desktop_hud" }} // <--- Metadata importante
             target="_blank"
             className="flex items-center gap-3 p-3 bg-black/80 border border-red-900/50 rounded-lg text-red-500 hover:bg-red-900/20 hover:border-red-500 transition-all group backdrop-blur-md"
          >
@@ -51,7 +56,7 @@ export default function Home() {
                 <div className="text-xs font-bold">FOCUS_MODE</div>
             </div>
             <Youtube size={24} className="group-hover:scale-110 transition-transform" />
-         </Link>
+         </TrackedLink>
       </div>
 
 
@@ -82,6 +87,7 @@ export default function Home() {
            </p>
 
            <div className="w-full max-w-md mx-auto mb-8">
+              {/* NOTA: Para rastrear estes botões, você deve editar o arquivo ActionButtons.tsx */}
               <ActionButtons />
            </div>
         </section>
@@ -95,13 +101,13 @@ export default function Home() {
                 <div className="h-full flex flex-col gap-4">
                   <DiscordStatus />
                   <div className="flex-1 p-4 bg-zinc-900/40 border border-yellow-500/20 rounded-xl hover:border-yellow-500/50 transition-colors flex flex-col justify-center">
-                     <div className="flex items-center gap-2 mb-2 text-yellow-500 text-xs font-mono font-bold uppercase">
-                        <span className="w-2 h-2 bg-yellow-500 rounded-full animate-ping" />
-                        Current_Focus
-                     </div>
-                     <p className="text-sm text-zinc-300">
-                        Otimizando algoritmos de <strong>OCR</strong> para a <strong>Nexus Eleva</strong>.
-                     </p>
+                      <div className="flex items-center gap-2 mb-2 text-yellow-500 text-xs font-mono font-bold uppercase">
+                         <span className="w-2 h-2 bg-yellow-500 rounded-full animate-ping" />
+                         Current_Focus
+                      </div>
+                      <p className="text-sm text-zinc-300">
+                         Otimizando algoritmos de <strong>OCR</strong> para a <strong>Nexus Eleva</strong>.
+                      </p>
                   </div>
                 </div>
               }
@@ -116,7 +122,6 @@ export default function Home() {
 
 
         {/* --- MOBILE DASHBOARD (EXCLUSIVO PARA CELULAR) --- */}
-        {/* Esta seção só aparece em telas menores que LG (lg:hidden) */}
         <section className="lg:hidden mb-12 border-t border-zinc-900 pt-8">
             <div className="flex items-center gap-2 mb-6 justify-center text-zinc-500 text-xs font-mono tracking-widest uppercase">
                 <Activity size={14} />
@@ -143,7 +148,7 @@ export default function Home() {
 
                 {/* 3. Utilities Row (Clock & Link) */}
                 <div className="grid grid-cols-2 gap-4">
-                    {/* Clock (Scaled down to fit) */}
+                    {/* Clock */}
                     <div className="bg-black/40 border border-zinc-800 rounded-xl p-4 flex flex-col items-center justify-center overflow-hidden">
                          <div className="scale-[0.65] origin-center">
                              <BinaryClock />
@@ -151,16 +156,18 @@ export default function Home() {
                          <div className="mt-1 text-[9px] text-green-500 font-mono">SYS_TIME</div>
                     </div>
 
-                    {/* Focus Mode Link */}
-                    <Link 
-                        href="https://youtube.com/playlist?list=SUA_PLAYLIST" 
+                    {/* LINK RASTREADO: SOUNDTRACK MOBILE */}
+                    <TrackedLink 
+                        href="https://youtube.com/playlist?list=PLcR6p6Bc6b2j1iNtPLXp-Ja9CkgUWkXOg" 
+                        eventName="click_soundtrack"
+                        eventData={{ origin: "mobile_dashboard" }}
                         target="_blank"
                         className="bg-black/40 border border-red-900/30 rounded-xl p-4 flex flex-col items-center justify-center text-red-500 hover:bg-red-900/10 transition-colors"
                     >
                         <Youtube size={24} className="mb-2" />
                         <span className="text-xs font-bold">FOCUS MODE</span>
                         <span className="text-[9px] opacity-60 font-mono">SOUNDTRACK</span>
-                    </Link>
+                    </TrackedLink>
                 </div>
 
             </div>
@@ -174,7 +181,7 @@ export default function Home() {
 
       </div>
         
-      {/* Terminal Quake Style (Se você manteve) */}
+      {/* Terminal Quake Style */}
       <ConsoleTerminal />
 
     </main>
