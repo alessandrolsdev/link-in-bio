@@ -2,13 +2,16 @@ import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
+// --- COMPONENTES VISUAIS E LÓGICOS ---
 import { CursorTracker } from "@/components/CursorTracker";
 import { NoiseOverlay } from "@/components/NoiseOverlay";
 import { BackgroundOrbs } from "@/components/BackgroundOrbs";
 import { SoundManager } from "@/components/SoundManager";
-
 import { KonamiWrapper } from "@/components/KonamiWrapper";
 import { MatrixRain } from "@/components/MatrixRain";
+
+// --- TELEMETRIA ---
+import { PageViewTracker } from "@/components/PageViewTracker";
 
 // Configuração de fontes otimizadas
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -46,14 +49,7 @@ export const metadata: Metadata = {
 
 /**
  * Layout Raiz (RootLayout)
- * Envolve toda a aplicação e gerencia providers globais, fontes e elementos de interface persistentes (como background e modais).
- * 
- * Estrutura de Camadas (Layers):
- * 1. Background & Ambiência (Grid, Noise, Matrix)
- * 2. Lógica Invisível (Cursor, Som, Konami)
- * 3. Interface Global (Command Menu)
- * 4. Conteúdo da Página ({children})
- * 5. Elementos Flutuantes (Terminal)
+ * Envolve toda a aplicação e gerencia providers globais, fontes e elementos de interface persistentes.
  */
 export default function RootLayout({
   children,
@@ -75,8 +71,9 @@ export default function RootLayout({
         <CursorTracker />
         <SoundManager />
         <KonamiWrapper />
-
-
+        
+        {/* 📡 TELEMETRIA ATIVA: Rastreia visualizações de página automaticamente */}
+        <PageViewTracker />
 
         {/* Camada 4: Conteúdo da Página */}
         {children}
