@@ -39,7 +39,7 @@ const items: ActionItem[] = [
     label: "NEXUS ELEVA",
     sub: "Software House & Solutions",
     type: "link",
-    url: "https://nexuseleva.com.br",
+    url: "https://www.instagram.com/nexuseleva/",
     icon: <Globe size={18} />,
     color: "group-hover:border-purple-500 group-hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]",
     bg: "bg-purple-500/10",

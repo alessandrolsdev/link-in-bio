@@ -62,7 +62,7 @@ export const DiscordStatus = () => {
 
       {/* Tooltip com Username */}
       <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 px-2 py-1 bg-black border border-white/10 rounded text-[9px] text-zinc-400 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-        User: alessandro#0000
+        User: {user?.discord_user?.username}
       </div>
     </div>
   );
