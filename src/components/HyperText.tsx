@@ -1,22 +1,25 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ$#@%&*!";
 
+interface HyperTextProps {
+  text: string;
+  className?: string; // Adicionado para permitir estilização externa
+}
+
 /**
  * Componente de Texto Hiperativo (Matrix Effect).
- * Ao passar o mouse, o texto embaralha aleatoriamente antes de estabilizar na palavra original.
- * 
- * @param {Object} props
- * @param {string} props.text - O texto a ser exibido e animado.
+ * Ao passar o mouse, o texto embaralha aleatoriamente.
  */
-export default function HyperText({ text }: { text: string }) {
+export default function HyperText({ text, className = "" }: HyperTextProps) {
   const [displayText, setDisplayText] = useState(text);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const scramble = () => {
     let iteration = 0;
-    clearInterval(intervalRef.current as NodeJS.Timeout);
+    
+    if (intervalRef.current) clearInterval(intervalRef.current);
 
     intervalRef.current = setInterval(() => {
       setDisplayText((prev) =>
@@ -26,13 +29,13 @@ export default function HyperText({ text }: { text: string }) {
             if (index < iteration) {
               return text[index];
             }
-            return LETTERS[Math.floor(Math.random() * 26)];
+            return LETTERS[Math.floor(Math.random() * LETTERS.length)];
           })
           .join("")
       );
 
       if (iteration >= text.length) {
-        clearInterval(intervalRef.current as NodeJS.Timeout);
+        if (intervalRef.current) clearInterval(intervalRef.current);
       }
 
       iteration += 1 / 3;
@@ -40,11 +43,11 @@ export default function HyperText({ text }: { text: string }) {
   };
 
   return (
-    <h1
+    <span
       onMouseEnter={scramble}
-      className="text-3xl font-bold mb-2 text-center tracking-tight cursor-default"
+      className={`cursor-default inline-block ${className}`} // inline-block permite animação correta
     >
       {displayText}
-    </h1>
+    </span>
   );
 }

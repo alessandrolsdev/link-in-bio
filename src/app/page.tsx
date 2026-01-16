@@ -10,6 +10,7 @@ import { GithubLog } from "@/components/GithubLog";
 import { DevMood } from "@/components/DevMood"; 
 import { ActionButtons } from "@/components/ActionButtons";
 import { ConsoleTerminal } from "@/components/ConsoleTerminal"; 
+import HyperText from "@/components/HyperText";
 
 // --- WIDGETS PARA OS SLOTS ---
 import { NexusControlPanel } from "@/components/NexusControlPanel";
@@ -79,8 +80,14 @@ export default function Home() {
               <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-black animate-pulse" />
            </div>
 
-           <h1 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-white">
-             ALESSANDRO <span className="text-purple-500">LIMA</span>
+          <h1 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-white flex justify-center gap-2 flex-wrap">
+             <HyperText 
+                text="ALESSANDRO" 
+                className="hover:text-zinc-200 transition-colors"
+             />
+             <span className="text-purple-500">
+                <HyperText text="LIMA" />
+             </span> 
            </h1>
            <p className="mt-2 text-zinc-400 font-mono text-xs md:text-sm mb-4">
              FullStack Engineer • Nexus Eleva Co-Founder
