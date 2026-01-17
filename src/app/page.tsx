@@ -11,6 +11,7 @@ import { DevMood } from "@/components/DevMood";
 import { ActionButtons } from "@/components/ActionButtons";
 import { ConsoleTerminal } from "@/components/ConsoleTerminal"; 
 import HyperText from "@/components/HyperText";
+import HeroAvatar from "@/components/HeroAvatar";
 
 // --- WIDGETS PARA OS SLOTS ---
 import { NexusControlPanel } from "@/components/NexusControlPanel";
@@ -66,18 +67,8 @@ export default function Home() {
         
         {/* HEADER (AVATAR & NOME) */}
         <section className="text-center mb-6">
-           <div className="inline-block relative">
-              <div className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-zinc-800 border-2 border-purple-500/50 mx-auto overflow-hidden shadow-[0_0_40px_rgba(168,85,247,0.4)] relative group cursor-pointer hover:scale-105 transition-transform">
-                 <Image 
-                   src="https://github.com/alessandrolsdev.png" 
-                   alt="Avatar" 
-                   width={112} 
-                   height={112} 
-                   className="object-cover"
-                   priority 
-                 />
-              </div>
-              <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-black animate-pulse" />
+           <div className="mb-6 mt-2">
+             <HeroAvatar />
            </div>
 
           <h1 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-white flex justify-center gap-2 flex-wrap">
