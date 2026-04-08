@@ -33,6 +33,10 @@ export interface LanyardData {
     name: string;
     state?: string;
     details?: string;
+    timestamps?: {
+      start?: number;
+      end?: number;
+    };
     assets?: {
       large_image?: string;
       small_image?: string;
