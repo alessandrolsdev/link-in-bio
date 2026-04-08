@@ -1,4 +1,3 @@
-import Image from "next/image";
 // import Link from "next/link"; <--- REMOVIDO (Substituído pelo TrackedLink onde necessário)
 import { Youtube, Activity } from "lucide-react";
 
@@ -17,6 +16,7 @@ import HeroAvatar from "@/components/HeroAvatar";
 import { NexusControlPanel } from "@/components/NexusControlPanel";
 import { GithubWidget } from "@/components/GithubWidget"; 
 import { DiscordStatus } from "@/components/DiscordStatus"; 
+import { CurrentFocusWidget } from "@/components/CurrentFocusWidget";
 
 // --- TELEMETRIA ---
 import { TrackedLink } from "@/components/TrackedLink"; // <--- NOVO IMPORT
@@ -96,21 +96,13 @@ export default function Home() {
            <NexusControlPanel 
               githubSlot={<GithubWidget />} 
               discordSlot={
-                <div className="h-full flex flex-col gap-4">
-                  <DiscordStatus />
-                  <div className="flex-1 p-4 bg-zinc-900/40 border border-yellow-500/20 rounded-xl hover:border-yellow-500/50 transition-colors flex flex-col justify-center">
-                      <div className="flex items-center gap-2 mb-2 text-yellow-500 text-xs font-mono font-bold uppercase">
-                         <span className="w-2 h-2 bg-yellow-500 rounded-full animate-ping" />
-                         Current_Focus
-                      </div>
-                      <p className="text-sm text-zinc-300">
-                         Otimizando algoritmos de <strong>OCR</strong> para a <strong>Nexus Eleva</strong>.
-                      </p>
+                  <div className="h-full flex flex-col gap-4">
+                    <DiscordStatus />
+                   <CurrentFocusWidget />
                   </div>
-                </div>
-              }
-           />
-        </section>
+               }
+            />
+         </section>
 
 
         {/* TECH STACKS */}
