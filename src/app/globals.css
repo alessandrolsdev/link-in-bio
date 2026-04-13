@@ -218,3 +218,32 @@ body::before {
   color: #00ff00 !important;
   text-shadow: 0 0 5px #00ff00;
 }
+
+/* ==========================================================================
+   6. Typewriter (Current Focus)
+   ========================================================================== */
+@keyframes typewriter-reveal {
+  from {
+    max-width: 0;
+  }
+  to {
+    max-width: 60ch;
+  }
+}
+
+@keyframes typewriter-caret {
+  50% {
+    border-color: transparent;
+  }
+}
+
+.typewriter {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 0;
+  border-right: 1px solid rgba(234, 179, 8, 0.65);
+  animation:
+    typewriter-reveal 2.6s steps(44, end) 0.15s forwards,
+    typewriter-caret 900ms step-end infinite;
+}
