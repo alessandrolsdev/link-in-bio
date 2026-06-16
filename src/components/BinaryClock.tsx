@@ -1,20 +1,22 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
+
+const emptySubscribe = () => () => {};
 
 export const BinaryClock = () => {
-  // 1. Inicia como mounted = false
-  const [mounted, setMounted] = useState(false);
   const [time, setTime] = useState(new Date());
+  const isHydrated = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
 
   useEffect(() => {
-    // 2. Assim que carregar no navegador, marca como montado e inicia o timer
-    setMounted(true);
     const interval = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
 
-  // 3. SE NÃO ESTIVER MONTADO (SERVER-SIDE), NÃO RENDERIZA NADA (ou renderiza um esqueleto fixo)
-  if (!mounted) return null; 
+  if (!isHydrated) return null; 
 
   const hours = time.getHours();
   const minutes = time.getMinutes();

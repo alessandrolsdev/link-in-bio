@@ -3,20 +3,9 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { unstable_cache } from "next/cache";
 
+import { parseLanyardRestUserResponse } from "@/lib/lanyard";
 import { getGithubEvents } from "@/lib/github";
-
 type TimePeriod = "madrugada" | "manhã" | "tarde" | "noite";
-
-interface LanyardUserResponse {
-  success: boolean;
-  data: {
-    listening_to_spotify: boolean;
-    spotify: {
-      song: string;
-      artist: string;
-    } | null;
-  };
-}
 
 function clampSnippet(input: string, maxLen: number): string {
   const normalized = input.replace(/\s+/g, " ").trim();
@@ -56,10 +45,8 @@ async function fetchSpotifyContextFromLanyard(): Promise<
   if (!response.ok) return { listeningToSpotify: false };
 
   const json: unknown = await response.json();
-  if (!json || typeof json !== "object") return { listeningToSpotify: false };
-
-  const payload = json as Partial<LanyardUserResponse>;
-  if (!payload.success || !payload.data) return { listeningToSpotify: false };
+  const payload = parseLanyardRestUserResponse(json);
+  if (!payload) return { listeningToSpotify: false };
 
   if (!payload.data.listening_to_spotify || !payload.data.spotify) {
     return { listeningToSpotify: false };

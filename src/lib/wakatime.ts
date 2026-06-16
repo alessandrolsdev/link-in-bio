@@ -1,4 +1,63 @@
+import { isNumber, isRecord, isString } from "@/lib/guards";
+
 const WAKATIME_API_KEY = process.env.WAKATIME_API_KEY;
+
+export interface WakatimeLanguage {
+  name: string;
+  text: string;
+  percent: number;
+}
+
+export interface WakatimeStats {
+  humanReadableTotal: string;
+  languages: WakatimeLanguage[];
+}
+
+function coercePercent(value: unknown): number | null {
+  if (isNumber(value)) return value;
+  if (isString(value)) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+}
+
+export function parseWakatimeStatsResponse(data: unknown): WakatimeStats | null {
+  if (!isRecord(data) || !isRecord(data.data) || !Array.isArray(data.data.languages)) {
+    return null;
+  }
+
+  const humanReadableTotal = isString(data.data.human_readable_total)
+    ? data.data.human_readable_total
+    : "0 hrs 0 mins";
+
+  const languages = data.data.languages
+    .map((language) => {
+      if (!isRecord(language) || !isString(language.name) || !isString(language.text)) {
+        return null;
+      }
+
+      const percent = coercePercent(language.percent);
+      if (percent === null) return null;
+
+      return {
+        name: language.name,
+        text: language.text,
+        percent,
+      };
+    })
+    .filter((language): language is WakatimeLanguage => language !== null);
+
+  if (languages.length === 0) {
+    return null;
+  }
+
+  return {
+    humanReadableTotal,
+    languages,
+  };
+}
 
 /**
  * Busca estatísticas de programação do WakaTime.
@@ -25,8 +84,8 @@ export async function getWakatimeStats() {
       return null;
     }
 
-    const data = await response.json();
-    return data.data;
+    const data: unknown = await response.json();
+    return parseWakatimeStatsResponse(data);
   } catch (error) {
     console.error("Erro ao buscar Wakatime:", error);
     return null;

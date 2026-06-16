@@ -1,3 +1,4 @@
+import { isNumber, isRecord, isString } from "@/lib/guards";
 
 export interface GithubEvent {
   id: string;
@@ -5,6 +6,13 @@ export interface GithubEvent {
   repo: string;
   date: string;
   message: string;
+}
+
+export interface GithubProfile {
+  login: string;
+  htmlUrl: string;
+  publicRepos: number;
+  followers: number;
 }
 
 export interface ProductivityStats {
@@ -30,6 +38,116 @@ interface GithubApiEvent {
   };
 }
 
+type SupportedGithubEventType =
+  | "PushEvent"
+  | "CreateEvent"
+  | "WatchEvent"
+  | "PullRequestEvent"
+  | "IssuesEvent";
+
+interface GithubApiProfile {
+  login: string;
+  html_url: string;
+  public_repos: number;
+  followers: number;
+}
+
+function isGithubApiEvent(value: unknown): value is GithubApiEvent {
+  return (
+    isRecord(value) &&
+    isString(value.id) &&
+    isString(value.type) &&
+    isString(value.created_at) &&
+    isRecord(value.repo) &&
+    isString(value.repo.name) &&
+    isRecord(value.payload)
+  );
+}
+
+function isSupportedEventType(type: string): type is SupportedGithubEventType {
+  return (
+    type === "PushEvent" ||
+    type === "CreateEvent" ||
+    type === "WatchEvent" ||
+    type === "PullRequestEvent" ||
+    type === "IssuesEvent"
+  );
+}
+
+function isGithubApiProfile(value: unknown): value is GithubApiProfile {
+  return (
+    isRecord(value) &&
+    isString(value.login) &&
+    isString(value.html_url) &&
+    isNumber(value.public_repos) &&
+    isNumber(value.followers)
+  );
+}
+
+function getEventMessage(event: GithubApiEvent): string {
+  if (event.type === "PushEvent") {
+    const commits = Array.isArray(event.payload.commits)
+      ? event.payload.commits
+      : [];
+
+    const firstCommit = commits.find(
+      (commit): commit is { message: string } =>
+        isRecord(commit) && isString(commit.message)
+    );
+
+    return firstCommit?.message ?? "No commit message";
+  }
+
+  if (event.type === "PullRequestEvent") {
+    return isRecord(event.payload.pull_request) &&
+      isString(event.payload.pull_request.title)
+      ? `PR: ${event.payload.pull_request.title}`
+      : "PR: Unknown PR";
+  }
+
+  if (event.type === "IssuesEvent") {
+    return isRecord(event.payload.issue) && isString(event.payload.issue.title)
+      ? `Issue: ${event.payload.issue.title}`
+      : "Issue: Unknown Issue";
+  }
+
+  if (event.type === "WatchEvent") {
+    return "Starred repository";
+  }
+
+  return "Created repository/branch";
+}
+
+export function mapGithubEvent(event: GithubApiEvent): GithubEvent {
+  return {
+    id: event.id,
+    type: event.type,
+    repo: event.repo.name.replace("alessandrolsdev/", ""),
+    date: event.created_at,
+    message: getEventMessage(event),
+  };
+}
+
+export function parseGithubEventsResponse(data: unknown): GithubEvent[] {
+  if (!Array.isArray(data)) return [];
+
+  return data
+    .filter(isGithubApiEvent)
+    .filter((event) => isSupportedEventType(event.type))
+    .map(mapGithubEvent);
+}
+
+export function parseGithubProfile(data: unknown): GithubProfile | null {
+  if (!isGithubApiProfile(data)) return null;
+
+  return {
+    login: data.login,
+    htmlUrl: data.html_url,
+    publicRepos: data.public_repos,
+    followers: data.followers,
+  };
+}
+
 export async function getGithubEvents(): Promise<GithubEvent[]> {
   try {
     // Busca os últimos 15 eventos públicos do seu usuário
@@ -39,42 +157,29 @@ export async function getGithubEvents(): Promise<GithubEvent[]> {
 
     if (!response.ok) return [];
 
-    const events: GithubApiEvent[] = await response.json();
-
-    // Filtra só o que interessa
-    return events
-      .filter((ev) =>
-        ev.type === "PushEvent" ||
-        ev.type === "CreateEvent" ||
-        ev.type === "WatchEvent" ||
-        ev.type === "PullRequestEvent" ||
-        ev.type === "IssuesEvent"
-      )
-      .map((ev) => {
-        // Lógica para pegar a mensagem correta dependendo do evento
-        let message = "System update";
-
-        if (ev.type === "PushEvent") message = ev.payload.commits?.[0]?.message || "No commit message";
-        else if (ev.type === "PullRequestEvent") message = `PR: ${ev.payload.pull_request?.title || "Unknown PR"}`;
-        else if (ev.type === "IssuesEvent") message = `Issue: ${ev.payload.issue?.title || "Unknown Issue"}`;
-        else if (ev.type === "WatchEvent") message = "Starred repository";
-        else if (ev.type === "CreateEvent") message = "Created repository/branch";
-
-        return {
-          id: ev.id,
-          type: ev.type,
-          repo: ev.repo.name.replace("alessandrolsdev/", ""),
-          date: ev.created_at,
-          message: message,
-        };
-      });
+    const events: unknown = await response.json();
+    return parseGithubEventsResponse(events);
   } catch (error) {
     console.error("Erro GitHub:", error);
     return [];
   }
 }
 
-// --- NOVA FUNÇÃO DE PRODUTIVIDADE ---
+export async function getGithubProfile(): Promise<GithubProfile | null> {
+  try {
+    const response = await fetch("https://api.github.com/users/alessandrolsdev", {
+      next: { revalidate: 3600 },
+    });
+
+    if (!response.ok) return null;
+
+    const profile: unknown = await response.json();
+    return parseGithubProfile(profile);
+  } catch (error) {
+    console.error("Erro GitHub Profile:", error);
+    return null;
+  }
+}
 
 export async function getDailyProductivity(): Promise<ProductivityStats> {
   try {
@@ -85,21 +190,25 @@ export async function getDailyProductivity(): Promise<ProductivityStats> {
 
     if (!res.ok) return { score: 0, level: "OFFLINE", color: "text-zinc-500", message: "GitHub API Sleeping..." };
 
-    const events: GithubApiEvent[] = await res.json();
+    const events = parseGithubEventsResponse(await res.json());
 
     // Data de hoje (UTC simples)
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Date().toISOString().split("T")[0];
 
     // Filtra eventos de HOJE
-    const todaysEvents = events.filter((ev) => ev.created_at?.startsWith(today));
+    const todaysEvents = events.filter((event) => event.date.startsWith(today));
 
     // Calcula pontuação
     let score = 0;
 
-    todaysEvents.forEach((ev) => {
-      if (ev.type === "PushEvent") {
-        score += ev.payload.size || 1;
-      } else if (ev.type === "PullRequestEvent" || ev.type === "IssuesEvent" || ev.type === "CreateEvent") {
+    todaysEvents.forEach((event) => {
+      if (event.type === "PushEvent") {
+        score += 1;
+      } else if (
+        event.type === "PullRequestEvent" ||
+        event.type === "IssuesEvent" ||
+        event.type === "CreateEvent"
+      ) {
         score += 1;
       }
     });
@@ -113,7 +222,7 @@ export async function getDailyProductivity(): Promise<ProductivityStats> {
 }
 
 // Função auxiliar interna
-function calculateMood(score: number): ProductivityStats {
+export function calculateMood(score: number): ProductivityStats {
   if (score === 0) return {
     score,
     level: "ZEN MODE",

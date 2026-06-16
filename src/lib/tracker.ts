@@ -1,9 +1,22 @@
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+export type TrackMetadataValue = string | number | boolean | null;
+export type TrackMetadata = Record<string, TrackMetadataValue>;
+
 interface TrackEvent {
   event_name: string;
-  metadata?: Record<string, any>;
+  metadata?: TrackMetadata;
+}
+
+export function buildTrackMetadata(
+  metadata: TrackMetadata,
+  path: string
+): TrackMetadata {
+  return {
+    ...metadata,
+    path,
+  };
 }
 
 /**
@@ -26,10 +39,7 @@ export const track = async ({ event_name, metadata = {} }: TrackEvent) => {
       },
       body: JSON.stringify({
         event_name,
-        metadata: {
-          ...metadata,
-          path: window.location.pathname, // Rastreia onde ocorreu
-        },
+        metadata: buildTrackMetadata(metadata, window.location.pathname),
         // O Supabase preenche 'created_at' automaticamente
       }),
       keepalive: true, 
