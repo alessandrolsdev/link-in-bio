@@ -17,11 +17,15 @@ import { NexusControlPanel } from "@/components/NexusControlPanel";
 import { GithubWidget } from "@/components/GithubWidget"; 
 import { DiscordStatus } from "@/components/DiscordStatus"; 
 import { CurrentFocusWidget } from "@/components/CurrentFocusWidget";
+import { getNexusControlPanelViewModel } from "@/lib/nexus-dashboard";
 
 // --- TELEMETRIA ---
 import { TrackedLink } from "@/components/TrackedLink"; // <--- NOVO IMPORT
 
-export default function Home() {
+export default async function Home() {
+  const { githubProfile, currentFocusStatus } =
+    await getNexusControlPanelViewModel();
+
   return (
     <main className="min-h-screen bg-black text-zinc-200 selection:bg-purple-500/30 relative overflow-x-hidden pb-24">
       
@@ -94,11 +98,11 @@ export default function Home() {
         {/* NEXUS CONTROL PANEL */}
         <section className="mb-4">
            <NexusControlPanel 
-              githubSlot={<GithubWidget />} 
+              githubSlot={<GithubWidget profile={githubProfile} />} 
               discordSlot={
                   <div className="h-full flex flex-col gap-4">
                     <DiscordStatus />
-                   <CurrentFocusWidget />
+                   <CurrentFocusWidget status={currentFocusStatus} />
                   </div>
                }
             />
