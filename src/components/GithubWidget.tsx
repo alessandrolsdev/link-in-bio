@@ -1,29 +1,16 @@
 import { Github, Users, GitFork, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-async function getGithubData() {
-  try {
-    const res = await fetch("https://api.github.com/users/alessandrolsdev", {
-      next: { revalidate: 3600 }, // Atualiza a cada 1 hora
-    });
-    
-    if (!res.ok) throw new Error("Falha ao buscar GitHub");
-    
-    return res.json();
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-}
+import { getGithubProfile } from "@/lib/github";
 
 export const GithubWidget = async () => {
-  const user = await getGithubData();
+  const user = await getGithubProfile();
 
   if (!user) return null;
 
   return (
     <Link 
-      href={user.html_url} 
+      href={user.htmlUrl} 
       target="_blank"
       className="group relative flex flex-col justify-between overflow-hidden rounded-xl bg-zinc-900/60 p-5 border border-white/5 transition-all hover:bg-zinc-800/80 hover:border-zinc-700 hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]"
     >
@@ -44,7 +31,7 @@ export const GithubWidget = async () => {
         {/* Repositórios */}
         <div className="flex flex-col items-center justify-center p-2 rounded bg-black/40 border border-white/5">
           <GitFork size={14} className="text-zinc-400 mb-1" />
-          <span className="text-lg font-bold text-zinc-200">{user.public_repos}</span>
+          <span className="text-lg font-bold text-zinc-200">{user.publicRepos}</span>
           <span className="text-[9px] text-zinc-500 uppercase">Repos</span>
         </div>
 

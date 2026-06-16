@@ -1,6 +1,8 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { NextResponse } from "next/server";
 
+import { isRecord } from "@/lib/guards";
+
 /**
  * Rota da API para o Chatbot com IA (Gemini).
  * Recebe mensagens do front-end e retorna a resposta da IA personificada.
@@ -10,7 +12,11 @@ import { NextResponse } from "next/server";
  */
 export async function POST(req: Request) {
   try {
-    const { message } = await req.json();
+    const body: unknown = await req.json();
+    if (!isRecord(body) || typeof body.message !== "string" || body.message.trim().length === 0) {
+      return NextResponse.json({ error: "Mensagem inválida" }, { status: 400 });
+    }
+
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
@@ -63,7 +69,7 @@ export async function POST(req: Request) {
       5. Se perguntarem "Contratação": "O Alessandro resolve seus bugs enquanto stacka ult no Cho'Gath. Vamos conversar?"
       6. Easter Egg: Se falarem "Matrix": "Siga o coelho branco... ou venha jogar um Civ."
 
-      [INPUT DO USUÁRIO]: "${message}"
+      [INPUT DO USUÁRIO]: "${body.message}"
       
       Responda como NEXUS_AI (em Português BR):
     `;
@@ -74,8 +80,10 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ reply: text });
 
-  } catch (error: any) {
-    console.error(`❌ ERRO NO CÉREBRO DIGITAL: ${error.message}`);
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : "Erro desconhecido";
+    console.error(`❌ ERRO NO CÉREBRO DIGITAL: ${errorMessage}`);
     return NextResponse.json({
       error: `Erro de conexão neural.`
     }, { status: 500 });

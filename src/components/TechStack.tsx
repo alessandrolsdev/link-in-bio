@@ -2,8 +2,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  Cpu, 
-  Database, 
   LayoutTemplate, 
   Server, 
   Bot,

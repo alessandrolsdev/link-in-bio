@@ -1,4 +1,3 @@
-import React from 'react';
 import { getNowPlaying } from '@/lib/spotify';
 import Image from 'next/image';
 import { Music } from 'lucide-react';
@@ -10,10 +9,10 @@ import { Music } from 'lucide-react';
  */
 export const SpotifyWidget = async () => {
   // Busca dados em tempo real (Server Component)
-  const response = await getNowPlaying();
+  const song = await getNowPlaying();
 
   // Tratamento para quando não há musica tocando ou erro na API
-  if (response.status === 204 || response.status > 400) {
+  if (!song) {
     return (
       <div className="w-full flex items-center gap-4 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 opacity-70">
         <Music className="text-zinc-600" />
@@ -22,12 +21,7 @@ export const SpotifyWidget = async () => {
     );
   }
 
-  const song = await response.json();
-  const isPlaying = song.is_playing;
-  const title = song.item.name;
-  const artist = song.item.artists.map((_artist: any) => _artist.name).join(', ');
-  const albumArt = song.item.album.images[0].url;
-  const songUrl = song.item.external_urls.spotify;
+  const { isPlaying, title, artist, albumArt, songUrl } = song;
 
   return (
     <a

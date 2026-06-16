@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { ReactNode } from "react";
-import { track } from "@/lib/tracker"; // Certifique-se que este arquivo existe conforme passo anterior
+import { track, type TrackMetadata } from "@/lib/tracker"; // Certifique-se que este arquivo existe conforme passo anterior
 
 interface TrackedLinkProps {
   href: string;
   eventName: string; // Ex: "click_whatsapp"
-  eventData?: Record<string, any>; // Ex: { origem: "header" }
+  eventData?: TrackMetadata; // Ex: { origem: "header" }
   children: ReactNode;
   className?: string;
   target?: string;

@@ -8,7 +8,7 @@ import { Code2, Clock } from "lucide-react";
  */
 export const WakaTimeWidget = async () => {
     const stats = await getWakatimeStats();
-    if (!stats || !stats.languages) return null;
+    if (!stats) return null;
 
     // Filtra para mostrar apenas as top 4 linguagens
     const topLanguages = stats.languages.slice(0, 4);
@@ -29,13 +29,13 @@ export const WakaTimeWidget = async () => {
                 </div>
                 <div className="flex items-center gap-1 text-zinc-500 text-[10px] font-mono">
                     <Clock size={10} />
-                    {stats.human_readable_total}
+                    {stats.humanReadableTotal}
                 </div>
             </div>
 
             {/* Lista de Linguagens */}
             <div className="flex flex-col gap-3 z-10">
-                {topLanguages.map((lang: any) => (
+                {topLanguages.map((lang) => (
                     <div key={lang.name} className="flex flex-col gap-1">
                         <div className="flex justify-between text-xs">
                             <span className="font-bold text-zinc-200">{lang.name}</span>

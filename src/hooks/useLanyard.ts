@@ -1,48 +1,14 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useState } from "react";
+
+import {
+  type LanyardData,
+  parseLanyardPresenceData,
+  parseLanyardSocketMessage,
+} from "@/lib/lanyard";
 
 const DISCORD_ID = process.env.NEXT_PUBLIC_DISCORD_USER_ID;
-
-// --- TIPAGEM ESTRITA (Segurança de Código) ---
-export interface LanyardData {
-  discord_user: {
-    username: string;
-    avatar: string;
-    id: string;
-    discriminator: string;
-  };
-  discord_status: "online" | "idle" | "dnd" | "offline";
-  active_on_discord_web: boolean;
-  active_on_discord_desktop: boolean;
-  active_on_discord_mobile: boolean;
-  listening_to_spotify: boolean;
-  spotify: {
-    track_id: string;
-    timestamps: {
-      start: number;
-      end: number;
-    };
-    song: string;
-    artist: string;
-    album_art_url: string;
-    album: string;
-  } | null;
-  activities: Array<{
-    type: number;
-    name: string;
-    state?: string;
-    details?: string;
-    timestamps?: {
-      start?: number;
-      end?: number;
-    };
-    assets?: {
-      large_image?: string;
-      small_image?: string;
-    };
-  }>;
-}
 
 // --- HOOK ---
 export const useLanyard = () => {
@@ -56,7 +22,22 @@ export const useLanyard = () => {
     }
 
     let socket: WebSocket | null = null;
-    let heartbeatInterval: NodeJS.Timeout;
+    let heartbeatInterval: ReturnType<typeof setInterval> | null = null;
+    let reconnectTimeout: ReturnType<typeof setTimeout> | null = null;
+
+    const clearHeartbeat = () => {
+      if (heartbeatInterval !== null) {
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = null;
+      }
+    };
+
+    const clearReconnect = () => {
+      if (reconnectTimeout !== null) {
+        clearTimeout(reconnectTimeout);
+        reconnectTimeout = null;
+      }
+    };
 
     const connect = () => {
       // Conecta diretamente ao socket do Lanyard
@@ -74,39 +55,50 @@ export const useLanyard = () => {
       };
 
       socket.onmessage = (event) => {
-        const message = JSON.parse(event.data);
+        if (typeof event.data !== "string") return;
+
+        let rawMessage: unknown;
+        try {
+          rawMessage = JSON.parse(event.data);
+        } catch {
+          return;
+        }
+
+        const message = parseLanyardSocketMessage(rawMessage);
+        if (!message) return;
 
         // Opcode 1: Hello (Configurar Heartbeat para manter conexão viva)
         if (message.op === 1) {
-          const interval = message.d.heartbeat_interval;
+          clearHeartbeat();
           heartbeatInterval = setInterval(() => {
             if (socket?.readyState === WebSocket.OPEN) {
               socket.send(JSON.stringify({ op: 3 })); // Enviar pulsação
             }
-          }, interval);
+          }, message.d.heartbeat_interval);
+          return;
         }
 
         // Opcode 0: Event Dispatch (Dados reais)
-        if (message.op === 0) {
-          if (message.t === "INIT_STATE" || message.t === "PRESENCE_UPDATE") {
-            // Atualiza o estado com os dados novos (merge se necessário)
-            setData((prev) => ({ ...prev, ...message.d }));
-          }
-        }
+        const nextData = parseLanyardPresenceData(message.d);
+        if (!nextData) return;
+
+        setData((prev) => (prev ? { ...prev, ...nextData } : nextData));
       };
 
       socket.onclose = () => {
         setIsConnected(false);
-        clearInterval(heartbeatInterval);
+        clearHeartbeat();
         // Tentar reconectar em 5s se cair
-        setTimeout(connect, 5000);
+        clearReconnect();
+        reconnectTimeout = setTimeout(connect, 5000);
       };
     };
 
     connect();
 
     return () => {
-      clearInterval(heartbeatInterval);
+      clearHeartbeat();
+      clearReconnect();
       socket?.close();
     };
   }, []);
