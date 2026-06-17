@@ -1,6 +1,8 @@
 import { getWakatimeStats } from "@/lib/wakatime";
 import { Code2, Clock } from "lucide-react";
 
+import { WidgetStatus } from "@/components/WidgetStatus";
+
 /**
  * Widget de Estatísticas de Código (WakaTime).
  * Exibe as linguagens mais utilizadas na última semana.
@@ -8,7 +10,17 @@ import { Code2, Clock } from "lucide-react";
  */
 export const WakaTimeWidget = async () => {
     const stats = await getWakatimeStats();
-    if (!stats) return null;
+    if (!stats) {
+        return (
+            <WidgetStatus
+                icon={Code2}
+                label="WAKATIME_FEED"
+                title="Weekly code stats indisponíveis"
+                description="Sem dados públicos suficientes para montar o resumo desta semana."
+                tone="purple"
+            />
+        );
+    }
 
     // Filtra para mostrar apenas as top 4 linguagens
     const topLanguages = stats.languages.slice(0, 4);

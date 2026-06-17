@@ -2,6 +2,8 @@ import { getNowPlaying } from '@/lib/spotify';
 import Image from 'next/image';
 import { Music } from 'lucide-react';
 
+import { WidgetStatus } from '@/components/WidgetStatus';
+
 /**
  * Widget "Listening Now" do Spotify.
  * Exibe a música que o usuário está ouvindo no momento (via Spotify API).
@@ -14,10 +16,15 @@ export const SpotifyWidget = async () => {
   // Tratamento para quando não há musica tocando ou erro na API
   if (!song) {
     return (
-      <div className="w-full flex items-center gap-4 p-4 rounded-xl bg-zinc-900/50 border border-zinc-800 opacity-70">
-        <Music className="text-zinc-600" />
-        <span className="text-xs font-mono text-zinc-500">SPOTIFY: OFFLINE</span>
-      </div>
+      <WidgetStatus
+        icon={Music}
+        label="SPOTIFY_SIGNAL"
+        title="Spotify offline"
+        description="Nenhuma faixa está tocando ou acessível agora."
+        tone="green"
+        variant="inline"
+        className="opacity-80"
+      />
     );
   }
 

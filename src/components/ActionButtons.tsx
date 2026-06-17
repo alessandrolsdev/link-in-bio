@@ -188,21 +188,27 @@ export const ActionButtons = () => {
               // --- SE FOR GRUPO EXPANSÍVEL (Mantém lógica original) ---
               <motion.div
                 layout 
-                onClick={() => toggleExpand(item.id)}
                 className={`
                   relative overflow-hidden rounded-xl border border-zinc-800/60 bg-zinc-900/40 backdrop-blur-sm transition-all duration-300 cursor-pointer
                   ${isExpanded ? "border-zinc-600 bg-zinc-900/80" : item.color}
                 `}
               >
                 {/* Cabeçalho do Grupo */}
-                <div className="p-3">
-                   <MainButtonContent />
-                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleExpand(item.id)}
+                  aria-expanded={isExpanded}
+                  aria-controls={`${item.id}-links`}
+                  className="w-full p-3 text-left"
+                >
+                  <MainButtonContent />
+                </button>
 
                 {/* Conteúdo Expansível (Sub-links com TrackedLink) */}
                 <AnimatePresence>
                   {isExpanded && (
                     <motion.div
+                      id={`${item.id}-links`}
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}

@@ -1,16 +1,36 @@
 "use client";
 import { useLanyard } from "@/hooks/useLanyard";
-import { Loader2, Gamepad2, Code, Monitor, Clock } from "lucide-react";
+import { Loader2, Gamepad2, Code, Monitor, Clock, WifiOff } from "lucide-react";
+
+import { WidgetStatus } from "@/components/WidgetStatus";
 
 export const DiscordStatus = () => {
-  const { data: user, isLoading } = useLanyard();
+  const { data: user, isLoading, connectionState } = useLanyard();
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 text-zinc-500 animate-pulse">
-        <Loader2 className="w-4 h-4 animate-spin" />
-        <span className="text-xs font-mono">Syncing...</span>
-      </div>
+      <WidgetStatus
+        icon={Loader2}
+        label="DISCORD_SYNC"
+        title="Sincronizando presença"
+        description="Aguardando resposta do socket do Lanyard."
+        tone="blue"
+        variant="inline"
+        className="animate-pulse"
+      />
+    );
+  }
+
+  if (!user && connectionState === "disconnected") {
+    return (
+      <WidgetStatus
+        icon={WifiOff}
+        label="DISCORD_SYNC"
+        title="Presença indisponível"
+        description="O feed do Discord não respondeu neste ciclo."
+        tone="red"
+        variant="inline"
+      />
     );
   }
 
@@ -20,15 +40,14 @@ export const DiscordStatus = () => {
   // Se não estiver fazendo nada, mostra mensagem de "Sistema Operante"
   if (!activity) {
     return (
-      <div className="flex items-center gap-3">
-        <div className="p-2 bg-zinc-800/50 rounded-lg">
-          <Monitor size={16} className="text-zinc-500" />
-        </div>
-        <div className="flex flex-col">
-          <span className="text-xs font-bold text-zinc-400">SYSTEM IDLE</span>
-          <span className="text-[10px] text-zinc-600 font-mono">Aguardando tarefas...</span>
-        </div>
-      </div>
+      <WidgetStatus
+        icon={Monitor}
+        label="DISCORD_PRESENCE"
+        title="SYSTEM IDLE"
+        description="Sem atividade rica no Discord neste momento."
+        tone="zinc"
+        variant="inline"
+      />
     );
   }
 
@@ -71,10 +90,10 @@ export const DiscordStatus = () => {
 
         {/* Timestamp (Opcional: mostra há quanto tempo está jogando) */}
         {activity.timestamps && (
-             <div className="flex items-center gap-1 mt-0.5 text-[9px] text-zinc-600">
-                <Clock size={8} />
-                <span>Active Session</span>
-             </div>
+          <div className="mt-0.5 flex items-center gap-1 text-[9px] text-zinc-600">
+            <Clock size={8} />
+            <span>Active Session</span>
+          </div>
         )}
       </div>
     </div>

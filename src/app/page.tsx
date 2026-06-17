@@ -17,6 +17,8 @@ import { NexusControlPanel } from "@/components/NexusControlPanel";
 import { GithubWidget } from "@/components/GithubWidget"; 
 import { DiscordStatus } from "@/components/DiscordStatus"; 
 import { CurrentFocusWidget } from "@/components/CurrentFocusWidget";
+import { WakaTimeWidget } from "@/components/WakaTimeWidget";
+import { YoutubeWidget } from "@/components/YoutubeWidget";
 import { getNexusControlPanelViewModel } from "@/lib/nexus-dashboard";
 
 // --- TELEMETRIA ---
@@ -112,6 +114,18 @@ export default async function Home() {
         {/* TECH STACKS */}
         <section className="mb-12">
            <TechStack />
+        </section>
+
+        <section className="mb-12">
+            <div className="mb-4 flex items-center gap-2 text-zinc-500 text-xs font-mono tracking-widest uppercase">
+                <Activity size={14} />
+                <span>Signal_Feeds // External_Runtime</span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                <YoutubeWidget />
+                <WakaTimeWidget />
+            </div>
         </section>
 
 

@@ -2,13 +2,24 @@ import { Github, Users, GitFork, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { type GithubProfile } from "@/lib/github";
+import { WidgetStatus } from "@/components/WidgetStatus";
 
 interface GithubWidgetProps {
   profile: GithubProfile | null;
 }
 
 export function GithubWidget({ profile }: GithubWidgetProps) {
-  if (!profile) return null;
+  if (!profile) {
+    return (
+      <WidgetStatus
+        icon={Github}
+        label="GH_PROFILE"
+        title="Perfil indisponível"
+        description="A API pública do GitHub não retornou dados suficientes neste ciclo."
+        tone="zinc"
+      />
+    );
+  }
 
   return (
     <Link 
