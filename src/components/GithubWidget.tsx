@@ -1,16 +1,18 @@
 import { Github, Users, GitFork, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import { getGithubProfile } from "@/lib/github";
+import { type GithubProfile } from "@/lib/github";
 
-export const GithubWidget = async () => {
-  const user = await getGithubProfile();
+interface GithubWidgetProps {
+  profile: GithubProfile | null;
+}
 
-  if (!user) return null;
+export function GithubWidget({ profile }: GithubWidgetProps) {
+  if (!profile) return null;
 
   return (
     <Link 
-      href={user.htmlUrl} 
+      href={profile.htmlUrl} 
       target="_blank"
       className="group relative flex flex-col justify-between overflow-hidden rounded-xl bg-zinc-900/60 p-5 border border-white/5 transition-all hover:bg-zinc-800/80 hover:border-zinc-700 hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]"
     >
@@ -31,14 +33,14 @@ export const GithubWidget = async () => {
         {/* Repositórios */}
         <div className="flex flex-col items-center justify-center p-2 rounded bg-black/40 border border-white/5">
           <GitFork size={14} className="text-zinc-400 mb-1" />
-          <span className="text-lg font-bold text-zinc-200">{user.publicRepos}</span>
+          <span className="text-lg font-bold text-zinc-200">{profile.publicRepos}</span>
           <span className="text-[9px] text-zinc-500 uppercase">Repos</span>
         </div>
 
         {/* Seguidores */}
         <div className="flex flex-col items-center justify-center p-2 rounded bg-black/40 border border-white/5">
           <Users size={14} className="text-zinc-400 mb-1" />
-          <span className="text-lg font-bold text-zinc-200">{user.followers}</span>
+          <span className="text-lg font-bold text-zinc-200">{profile.followers}</span>
           <span className="text-[9px] text-zinc-500 uppercase">Seguidores</span>
         </div>
 
@@ -52,7 +54,7 @@ export const GithubWidget = async () => {
       {/* Rodapé Hacker */}
       <div className="flex justify-between items-end border-t border-white/5 pt-3">
         <div className="flex flex-col">
-            <span className="text-[9px] text-zinc-600 font-mono">ID: {user.login}</span>
+            <span className="text-[9px] text-zinc-600 font-mono">ID: {profile.login}</span>
         </div>
         <div className="flex items-center gap-1 text-[10px] text-green-500/80 font-mono">
             <span>CONNECTED</span>
@@ -62,4 +64,4 @@ export const GithubWidget = async () => {
 
     </Link>
   );
-};
+}

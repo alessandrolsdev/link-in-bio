@@ -1,10 +1,9 @@
-"use server";
-
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { unstable_cache } from "next/cache";
 
-import { parseLanyardRestUserResponse } from "@/lib/lanyard";
 import { getGithubEvents } from "@/lib/github";
+import { parseLanyardRestUserResponse } from "@/lib/lanyard";
+
 type TimePeriod = "madrugada" | "manhã" | "tarde" | "noite";
 
 function clampSnippet(input: string, maxLen: number): string {
@@ -46,15 +45,11 @@ async function fetchSpotifyContextFromLanyard(): Promise<
 
   const json: unknown = await response.json();
   const payload = parseLanyardRestUserResponse(json);
-  if (!payload) return { listeningToSpotify: false };
-
-  if (!payload.data.listening_to_spotify || !payload.data.spotify) {
+  if (!payload || !payload.data.listening_to_spotify || !payload.data.spotify) {
     return { listeningToSpotify: false };
   }
 
   const { song, artist } = payload.data.spotify;
-  if (!song || !artist) return { listeningToSpotify: false };
-
   return {
     listeningToSpotify: true,
     song: clampSnippet(song, 60),
@@ -64,35 +59,28 @@ async function fetchSpotifyContextFromLanyard(): Promise<
 
 async function getLastCommitMessage(): Promise<string | null> {
   const events = await getGithubEvents();
-  const lastPush = events.find((ev) => ev.type === "PushEvent");
+  const lastPush = events.find((event) => event.type === "PushEvent");
   if (!lastPush?.message) return null;
 
-  const msg = clampSnippet(lastPush.message, 80);
-  return msg.length > 0 ? msg : null;
+  return clampSnippet(lastPush.message, 80);
 }
 
-async function generateLivingStatusUncached(): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) return "System Idle...";
-
-  const [lastCommitMessage, spotifyContext] = await Promise.all([
-    getLastCommitMessage(),
-    fetchSpotifyContextFromLanyard(),
-  ]);
-
-  const hour = getLocalHour("America/Cuiaba");
-  const timePeriod = getTimePeriod(hour);
-
-  const commitLine = lastCommitMessage
-    ? `Último commit: "${lastCommitMessage}".`
+function buildCurrentFocusPrompt(
+  commitMessage: string | null,
+  spotifyContext:
+    | { listeningToSpotify: true; song: string; artist: string }
+    | { listeningToSpotify: false },
+  timePeriod: TimePeriod
+): string {
+  const commitLine = commitMessage
+    ? `Último commit: "${commitMessage}".`
     : "Sem commit público recente detectado.";
 
-  const spotifyLine =
-    spotifyContext.listeningToSpotify
-      ? `Spotify: ouvindo "${spotifyContext.song}" — ${spotifyContext.artist}.`
-      : "Spotify: sem música no momento.";
+  const spotifyLine = spotifyContext.listeningToSpotify
+    ? `Spotify: ouvindo "${spotifyContext.song}" — ${spotifyContext.artist}.`
+    : "Spotify: sem música no momento.";
 
-  const prompt = [
+  return [
     "Você é um bardo cyberpunk que narra o foco atual de um desenvolvedor.",
     "Gere exatamente 1 frase curta (máximo 120 caracteres), em PT-BR.",
     "Sem emojis. Sem aspas na resposta. Sem quebras de linha.",
@@ -101,6 +89,22 @@ async function generateLivingStatusUncached(): Promise<string> {
     spotifyLine,
     "Saída:",
   ].join("\n");
+}
+
+async function getCurrentFocusStatusUncached(): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return "System Idle...";
+
+  const [commitMessage, spotifyContext] = await Promise.all([
+    getLastCommitMessage(),
+    fetchSpotifyContextFromLanyard(),
+  ]);
+
+  const prompt = buildCurrentFocusPrompt(
+    commitMessage,
+    spotifyContext,
+    getTimePeriod(getLocalHour("America/Cuiaba"))
+  );
 
   const genAI = new GoogleGenerativeAI(apiKey);
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
@@ -112,15 +116,16 @@ async function generateLivingStatusUncached(): Promise<string> {
   return text.length > 0 ? text : "System Idle...";
 }
 
-export const generateLivingStatus = unstable_cache(
+export const getCurrentFocusStatus = unstable_cache(
   async (): Promise<string> => {
     try {
-      return await generateLivingStatusUncached();
+      return await getCurrentFocusStatusUncached();
     } catch {
       return "System Idle...";
     }
   },
-  ["living-status-v1"],
+  ["current-focus-status-v1"],
   { revalidate: 600 }
 );
 
+export { buildCurrentFocusPrompt };

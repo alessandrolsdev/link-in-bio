@@ -4,42 +4,56 @@ import { useEffect } from "react";
 
 /**
  * Gerenciador de Efeitos Sonoros (SFX).
- * Adiciona sons de 'hover' e 'click' automaticamente a todos os botões e links da página.
- * Utiliza MutationObserver para garantir que elementos criados dinamicamente também recebam sons.
+ * Usa delegação de eventos para tocar sons em elementos interativos
+ * sem anexar listeners individuais a cada link ou botão do DOM.
  */
 export const SoundManager = () => {
   const [playHover] = useSound("/sounds/hover.mp3", { volume: 0.5 });
   const [playClick] = useSound("/sounds/click.mp3", { volume: 0.5 });
 
   useEffect(() => {
-    // Função para anexar listeners de som aos elementos interativos
-    const addSoundToElements = () => {
-      const elements = document.querySelectorAll("a, button");
+    let hoveredInteractive: Element | null = null;
 
-      elements.forEach((el) => {
-        el.addEventListener("mouseenter", () => playHover());
-        el.addEventListener("click", () => playClick());
-      });
-
-      // Cleanup para evitar listeners duplicados
-      return () => {
-        elements.forEach((el) => {
-          el.removeEventListener("mouseenter", () => playHover());
-          el.removeEventListener("click", () => playClick());
-        });
-      };
+    const getInteractiveTarget = (target: EventTarget | null): Element | null => {
+      if (!(target instanceof Element)) return null;
+      return target.closest("a, button");
     };
 
-    // Executa na montagem inicial
-    const cleanup = addSoundToElements();
+    const handlePointerOver = (event: PointerEvent) => {
+      const interactive = getInteractiveTarget(event.target);
+      if (!interactive || interactive === hoveredInteractive) return;
 
-    // Observa mudanças no DOM para aplicar sons a novos elementos
-    const observer = new MutationObserver(addSoundToElements);
-    observer.observe(document.body, { childList: true, subtree: true });
+      hoveredInteractive = interactive;
+      playHover();
+    };
+
+    const handlePointerOut = (event: PointerEvent) => {
+      const currentInteractive = getInteractiveTarget(event.target);
+      const nextInteractive = getInteractiveTarget(event.relatedTarget);
+
+      if (
+        currentInteractive &&
+        currentInteractive === hoveredInteractive &&
+        currentInteractive !== nextInteractive
+      ) {
+        hoveredInteractive = null;
+      }
+    };
+
+    const handleClick = (event: MouseEvent) => {
+      if (getInteractiveTarget(event.target)) {
+        playClick();
+      }
+    };
+
+    document.addEventListener("pointerover", handlePointerOver);
+    document.addEventListener("pointerout", handlePointerOut);
+    document.addEventListener("click", handleClick);
 
     return () => {
-      cleanup();
-      observer.disconnect();
+      document.removeEventListener("pointerover", handlePointerOver);
+      document.removeEventListener("pointerout", handlePointerOut);
+      document.removeEventListener("click", handleClick);
     };
   }, [playHover, playClick]);
 
