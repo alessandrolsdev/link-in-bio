@@ -32,9 +32,12 @@ export const GithubLogList = ({ events }: { events: GithubEvent[] }) => {
     <div className="flex flex-col gap-2 transition-all duration-300">
 
       {/* Header Interativo */}
-      <div
+      <button
+        type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex items-center justify-between text-[10px] text-green-500 font-mono tracking-widest uppercase cursor-pointer hover:text-green-400 group select-none"
+        aria-expanded={isExpanded}
+        aria-controls="github-log-list"
+        className="flex w-full items-center justify-between text-[10px] text-green-500 font-mono tracking-widest uppercase cursor-pointer hover:text-green-400 group select-none text-left"
       >
         <div className="flex items-center gap-2">
           <Terminal size={10} />
@@ -46,10 +49,13 @@ export const GithubLogList = ({ events }: { events: GithubEvent[] }) => {
         <div className="opacity-60 group-hover:opacity-100 transition-opacity">
           {isExpanded ? <Minimize2 size={12} /> : <ChevronDown size={12} />}
         </div>
-      </div>
+      </button>
 
       {/* Lista Animada */}
-      <div className={`flex flex-col gap-2 ${isExpanded ? "bg-black/90 p-2 rounded border border-zinc-800/50" : ""}`}>
+      <div
+        id="github-log-list"
+        className={`flex flex-col gap-2 ${isExpanded ? "bg-black/90 p-2 rounded border border-zinc-800/50" : ""}`}
+      >
         <AnimatePresence mode="popLayout">
           {displayedEvents.map((event) => (
             <motion.div
@@ -87,7 +93,7 @@ export const GithubLogList = ({ events }: { events: GithubEvent[] }) => {
       </div>
 
       {/* Dica visual pequena quando recolhido */}
-      {!isExpanded && (
+      {!isExpanded && events.length > 1 && (
         <div className="text-[8px] text-zinc-700 font-mono text-right hover:text-green-500 cursor-pointer" onClick={() => setIsExpanded(true)}>
           + {events.length - 1} more events...
         </div>

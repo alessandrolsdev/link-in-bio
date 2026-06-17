@@ -10,36 +10,37 @@ import {
   Layers
 } from "lucide-react";
 
-// Dados das Stacks (Mantivemos os mesmos)
 const stackCategories = [
   {
-    title: "FRONTEND",
+    title: "RUNTIME",
     icon: <LayoutTemplate size={14} className="text-blue-400" />,
     items: [
-      { name: "Next.js 14", desc: "App Router & SSR" },
-      { name: "React 18", desc: "Component Based" },
-      { name: "Tailwind", desc: "Utility First CSS" },
-      { name: "Framer", desc: "Motion Library" }
+      { name: "Next.js 16", desc: "App Router" },
+      { name: "React 19", desc: "UI Runtime" },
+      { name: "TypeScript", desc: "Strict Mode" },
+      { name: "Tailwind CSS 4", desc: "Token Surface" }
     ]
   },
   {
-    title: "BACKEND",
+    title: "SERVER FLOW",
     icon: <Server size={14} className="text-green-400" />,
     items: [
-      { name: "FastAPI", desc: "Python Async" },
-      { name: "Node.js", desc: "Event Loop" },
-      { name: "Postgres", desc: "Relational DB" },
-      { name: "Redis", desc: "In-Memory Cache" }
+      { name: "Server Components", desc: "Primary Render" },
+      { name: "Route Handlers", desc: "Chat API" },
+      { name: "Cached Fetch", desc: "revalidate" },
+      { name: "Vercel Build", desc: "Deploy Target" }
     ]
   },
   {
-    title: "AI & AUTO",
+    title: "LIVE SIGNALS",
     icon: <Bot size={14} className="text-yellow-400" />,
     items: [
-      { name: "OpenCV", desc: "Computer Vision" },
-      { name: "Tesseract", desc: "OCR Engine" },
-      { name: "Python", desc: "Scripting / RPA" },
-      { name: "Gemini", desc: "Generative AI" }
+      { name: "GitHub", desc: "Public Activity" },
+      { name: "Spotify", desc: "Now Playing" },
+      { name: "Lanyard", desc: "Discord Presence" },
+      { name: "Gemini 2.5", desc: "Focus + Chat" },
+      { name: "YouTube", desc: "Latest Feed" },
+      { name: "WakaTime", desc: "Weekly Stats" }
     ]
   }
 ];
@@ -51,10 +52,13 @@ export const TechStack = () => {
     <div className="w-full">
       
       {/* --- BARRA DE CABEÇALHO (Compacta) --- */}
-      <motion.div 
+      <motion.button
+        type="button"
         onClick={() => setIsExpanded(!isExpanded)}
+        aria-expanded={isExpanded}
+        aria-controls="tech-stack-panel"
         className={`
-          relative z-10 w-full p-4 rounded-xl cursor-pointer border transition-all duration-300 group
+          relative z-10 w-full p-4 rounded-xl cursor-pointer border transition-all duration-300 group text-left
           ${isExpanded 
             ? "bg-zinc-900 border-zinc-700 rounded-b-none" 
             : "bg-zinc-900/60 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/80"
@@ -98,12 +102,13 @@ export const TechStack = () => {
              </div>
           </div>
         </div>
-      </motion.div>
+      </motion.button>
 
       {/* --- CONTEÚDO EXPANSÍVEL (Grid de Cartões) --- */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
+            id="tech-stack-panel"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
@@ -136,7 +141,7 @@ export const TechStack = () => {
                <div className="md:col-span-3 flex justify-center pt-2">
                   <div className="flex items-center gap-2 text-[10px] text-zinc-500 font-mono border px-3 py-1 rounded-full border-zinc-800 bg-black/50">
                      <Zap size={10} className="text-orange-400" />
-                     <span>CORE: Clean Architecture • SOLID • TDD</span>
+                     <span>CORE: server-first widgets • typed integrations • explicit fallback states</span>
                   </div>
                </div>
 

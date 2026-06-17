@@ -2,6 +2,8 @@ import { getLatestVideo } from "@/lib/youtube";
 import Image from "next/image";
 import { Youtube, PlayCircle } from "lucide-react";
 
+import { WidgetStatus } from "@/components/WidgetStatus";
+
 /**
  * Widget do YouTube.
  * Mostra o vídeo mais recente postado ou assistido (dependendo da lógica da API).
@@ -10,7 +12,17 @@ import { Youtube, PlayCircle } from "lucide-react";
 export const YoutubeWidget = async () => {
   const video = await getLatestVideo();
 
-  if (!video) return null;
+  if (!video) {
+    return (
+      <WidgetStatus
+        icon={Youtube}
+        label="YOUTUBE_FEED"
+        title="Feed de vídeo indisponível"
+        description="Nenhum vídeo público foi resolvido a partir da playlist configurada."
+        tone="red"
+      />
+    );
+  }
 
   return (
     <a

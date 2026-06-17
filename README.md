@@ -1,145 +1,135 @@
-# 🚀 Alessandro Lima - Interactive Portfolio (Link in Bio)
+# 🚀 Alessandro Lima - Interactive Portfolio
 
-![Project Banner](https://img.shields.io/badge/Status-Finished-success?style=for-the-badge) ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge) ![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript)
+![Project Banner](https://img.shields.io/badge/Status-Active-success?style=for-the-badge) ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge) ![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js) ![TypeScript](https://img.shields.io/badge/TypeScript-Strict-blue?style=for-the-badge&logo=typescript)
 
-> **Um portfólio interativo, imersivo e gamificado com estética Cyberpunk/Hacker.**  
-> Desenvolvido para demonstrar habilidades avançadas em Frontend, UX e integração com APIs.
-
----
-
-## ⚡ Visão Geral
-
-Este projeto não é apenas um "Link in Bio" comum. É uma experiência digital completa que reflete minha identidade como desenvolvedor FullStack apaixonado por interfaces modernas e código limpo.
-
-O site combina design responsivo, animações fluidas com **Framer Motion**, integração em tempo real com **Spotify**, **GitHub**, **YouTube** e **WakaTime**, além de um chatbot integrado alimentado pelo **Google Gemini AI**.
+> Portfólio interativo com estética cyberpunk/hacker, widgets em tempo quase real e camada visual orientada por sinais externos.
 
 ---
 
-## ✨ Funcionalidades Principais
+## ⚡ Visão geral
 
-- 🎨 **Design Cyberpunk/Hacker**: Cores neon, fontes monoespaçadas, efeitos de glitch e ruído visual (noise).
-- 🖱️ **Interatividade Avançada**: Cursor customizado, cards magnéticos, efeitos de spotlight e tilt 3D.
-- 🎵 **Widget Spotify (Real-Time)**: Mostra o que estou ouvindo agora com animação de vinil e equalizador.
-- 📺 **Widget YouTube**: Exibe o último vídeo postado ou assistido.
-- 📊 **Stats GitHub & WakaTime**: Monitoramento de commits e linguagens de programação mais usadas na semana.
-- 🤖 **Chatbot IA (Gemini)**: Um terminal interativo onde você pode conversar com o "NEXUS_AI" sobre minha carreira.
-- 🕹️ **Easter Egg (Konami Code)**: Digite `↑ ↑ ↓ ↓ ← → ← → B A` para desbloquear o **"God Mode"** (Matrix Rain + Hacker Theme).
-- ⌨️ **Command Menu (`Cmd+K`)**: Navegação rápida via teclado para power users.
+O projeto usa **Next.js 16 + React 19** com composição server-first para renderizar a home, mantendo interações client-side apenas onde elas agregam UX real.
 
----
+Os módulos principais combinam:
 
-## 🛠️ Tech Stack
-
-Este projeto foi construído utilizando as tecnologias mais modernas do ecossistema React:
-
-- **Core**: [Next.js 14](https://nextjs.org/) (App Router), [React](https://react.dev/), [TypeScript](https://www.typescriptlang.org/).
-- **Estilização**: [Tailwind CSS](https://tailwindcss.com/), [PostCSS](https://postcss.org/).
-- **Animações**: [Framer Motion](https://www.framer.com/motion/).
-- **Data Fetching**: [SWR](https://swr.vercel.app/) e Fetch API com caching (ISR).
-- **IA**: [Google Generative AI SDK](https://ai.google.dev/) (Gemini Flash Model).
-- **APIs Externas**: Spotify Web API, GitHub REST API, YouTube Data API, WakaTime API, Lanyard (Discord).
-- **Ícones**: [Lucide React](https://lucide.dev/).
+- widgets de GitHub, Spotify, Discord/Lanyard, YouTube e WakaTime
+- terminal interativo com Gemini em `Ctrl+J` ou `Cmd+J`
+- links rastreados para telemetria de interação
+- identidade visual neon com animações em Framer Motion
 
 ---
 
-## 📂 Estrutura do Projeto
+## ✨ Funcionalidades principais
 
-A organização do código segue as melhores práticas de arquitetura para Next.js:
+- **Design cyberpunk/hacker** com tipografia monoespaçada, brilho neon e overlays visuais.
+- **Nexus Control Panel** com resumo de sinais externos e foco atual do perfil.
+- **Widgets server-first** para GitHub, Spotify, YouTube e WakaTime com fallback explícito para loading, vazio e indisponibilidade.
+- **Presença Discord via Lanyard** consumida por hook client-side para refletir atividade atual.
+- **Terminal IA com Gemini** exposto por `src/app/api/chat/route.ts`.
+- **Telemetria de cliques** para links principais via `TrackedLink`.
+- **Easter egg do Konami Code** com modo visual alternativo.
+
+---
+
+## 🛠️ Stack atual
+
+- **Runtime UI**: [Next.js 16](https://nextjs.org/), [React 19](https://react.dev/), [TypeScript strict](https://www.typescriptlang.org/)
+- **Estilo e motion**: [Tailwind CSS 4](https://tailwindcss.com/), [Framer Motion](https://www.framer.com/motion/), [Lucide React](https://lucide.dev/)
+- **Fluxo server-first**: App Router, Server Components, Route Handlers, `fetch` com `revalidate`
+- **Integrações externas**: GitHub REST API, Spotify Web API, Lanyard, YouTube Data API, WakaTime API, Google Gemini
+- **Telemetria**: endpoints REST do Supabase consumidos no client para analytics de navegação
+
+---
+
+## 📂 Estrutura do projeto
 
 ```bash
 src/
 ├── app/
-│   ├── api/chat/       # Route Handler para o Chatbot (Gemini)
-│   ├── layout.tsx      # Layout Global (Providers, Metadata, Fonts)
-│   ├── page.tsx        # Página Principal (Composição dos Widgets)
-│   └── globals.css     # Estilos Globais e Variáveis CSS
-├── components/         # Componentes Reutilizáveis (UI)
-│   ├── AnimatedSection # Wrapper para animações de entrada
-│   ├── CyberCard       # Card principal com efeitos visuais
-│   ├── TerminalModal   # Terminal interativo (Chatbot)
-│   └── ... (Widgets: Spotify, GitHub, YouTube, etc)
-├── lib/                # Camada de Lógica e Serviços (API Clients)
-│   ├── github.ts       # Integração GitHub
-│   ├── spotify.ts      # Integração Spotify
-│   ├── wakatime.ts     # Integração WakaTime
-│   └── youtube.ts      # Integração YouTube
-└── hooks/              # Hooks Customizados
-    ├── useKonami.tsx   # Lógica do Easter Egg
-    └── useLanyard.ts   # Hook para status do Discord
+│   ├── api/chat/route.ts      # Route Handler do terminal IA
+│   ├── globals.css            # Base visual global e modo hacker
+│   ├── layout.tsx             # Layout global e wrappers visuais
+│   └── page.tsx               # Composição principal da home
+├── components/
+│   ├── ActionButtons.tsx      # CTAs rastreados e grupos expansíveis
+│   ├── ConsoleTerminal.tsx    # Terminal interativo com Gemini
+│   ├── NexusControlPanel.tsx  # Painel principal de sinais
+│   ├── TechStack.tsx          # Runtime e integrações exibidas na UI
+│   └── ...                    # Widgets e componentes visuais auxiliares
+├── hooks/
+│   ├── useKonami.tsx          # Easter egg visual
+│   └── useLanyard.ts          # Socket client-side para presença Discord
+└── lib/
+    ├── current-focus.ts       # Geração do status atual com Gemini
+    ├── github.ts              # Perfil, eventos e métricas GitHub
+    ├── spotify.ts             # Now Playing do Spotify
+    ├── tracker.ts             # Telemetria client-side
+    ├── wakatime.ts            # Estatísticas semanais de código
+    └── youtube.ts             # Último vídeo da playlist configurada
 ```
 
 ---
 
-## 🚀 Como Rodar Localmente
-
-Siga os passos abaixo para clonar e executar o projeto em sua máquina:
+## 🚀 Como rodar localmente
 
 ### Pré-requisitos
-- Node.js 18+ instalado.
-- Gerenciador de pacotes (npm, yarn, pnpm ou bun).
-- Chaves de API para os serviços (Spotify, GitHub, YouTube, Gemini, WakaTime) configuradas em um arquivo `.env.local`.
+
+- Node.js LTS compatível com o runtime do Next.js 16
+- npm instalado
+- Variáveis de ambiente configuradas em `.env.local`
 
 ### Instalação
 
-1. **Clone o repositório:**
+1. Clone o repositório:
    ```bash
    git clone https://github.com/alessandrolsdev/link-in-bio.git
    cd link-in-bio
    ```
 
-2. **Instale as dependências:**
+2. Instale as dependências:
    ```bash
    npm install
-   # ou
-   yarn install
    ```
 
-3. **Configure as Variáveis de Ambiente:**
-   Crie um arquivo `.env.local` na raiz e preencha:
+3. Configure `.env.local`:
    ```env
-   # Gemini AI
-   GEMINI_API_KEY=sua_chave_aqui
+   GEMINI_API_KEY=...
 
-   # Spotify
+   NEXT_PUBLIC_DISCORD_USER_ID=...
+
    SPOTIFY_CLIENT_ID=...
    SPOTIFY_CLIENT_SECRET=...
    SPOTIFY_REFRESH_TOKEN=...
 
-   # YouTube
    YOUTUBE_API_KEY=...
    YOUTUBE_PLAYLIST_ID=...
 
-   # WakaTime
    WAKATIME_API_KEY=...
+
+   NEXT_PUBLIC_SUPABASE_URL=...
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
    ```
 
-4. **Execute o servidor de desenvolvimento:**
+4. Execute em desenvolvimento:
    ```bash
    npm run dev
    ```
 
-5. **Acesse:** Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
+5. Acesse [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## 🤝 Contribuição
+## ✅ Validação local
 
-Contribuições são bem-vindas! Se você tiver alguma ideia para melhorar este projeto ou encontrar algum bug:
-
-1. Faça um Fork do projeto.
-2. Crie uma Branch (`git checkout -b feature/MinhaFeature`).
-3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`).
-4. Push para a Branch (`git push origin feature/MinhaFeature`).
-5. Abra um Pull Request.
+```bash
+npm run typecheck
+npm run lint
+npm test
+npm run build
+```
 
 ---
 
 ## 📄 Licença
 
-Este projeto está licenciado sob a licença **MIT** - sinta-se livre para usar, estudar e modificar.
-
----
-
-<p align="center">
-  Feito com 💜 e muito ☕ por <a href="https://github.com/alessandrolsdev">Alessandro Lima</a>
-</p>
+Este projeto está licenciado sob a licença **MIT**.

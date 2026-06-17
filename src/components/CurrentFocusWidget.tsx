@@ -3,6 +3,8 @@ interface CurrentFocusWidgetProps {
 }
 
 export function CurrentFocusWidget({ status }: CurrentFocusWidgetProps) {
+  const resolvedStatus = status.trim() || "System Idle...";
+
   return (
     <div className="flex-1 p-4 bg-zinc-900/40 border border-yellow-500/20 rounded-xl hover:border-yellow-500/50 transition-colors flex flex-col justify-center">
       <div className="flex items-center gap-2 mb-2 text-yellow-500 text-xs font-mono font-bold uppercase">
@@ -10,7 +12,7 @@ export function CurrentFocusWidget({ status }: CurrentFocusWidgetProps) {
         Current_Focus
       </div>
       <p className="text-sm text-zinc-300 font-mono">
-        <span className="typewriter">{status}</span>
+        <span className="typewriter">{resolvedStatus}</span>
       </p>
     </div>
   );

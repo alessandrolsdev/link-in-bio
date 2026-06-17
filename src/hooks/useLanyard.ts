@@ -10,10 +10,13 @@ import {
 
 const DISCORD_ID = process.env.NEXT_PUBLIC_DISCORD_USER_ID;
 
+type LanyardConnectionState = "connecting" | "connected" | "disconnected";
+
 // --- HOOK ---
 export const useLanyard = () => {
   const [data, setData] = useState<LanyardData | null>(null);
-  const [isConnected, setIsConnected] = useState(false); // Útil para UI de status
+  const [connectionState, setConnectionState] =
+    useState<LanyardConnectionState>(DISCORD_ID ? "connecting" : "disconnected");
 
   useEffect(() => {
     if (!DISCORD_ID) {
@@ -40,11 +43,12 @@ export const useLanyard = () => {
     };
 
     const connect = () => {
+      setConnectionState("connecting");
       // Conecta diretamente ao socket do Lanyard
       socket = new WebSocket("wss://api.lanyard.rest/socket");
 
       socket.onopen = () => {
-        setIsConnected(true);
+        setConnectionState("connected");
         // Inicialização do Lanyard (Opcode 2)
         socket?.send(
           JSON.stringify({
@@ -86,7 +90,7 @@ export const useLanyard = () => {
       };
 
       socket.onclose = () => {
-        setIsConnected(false);
+        setConnectionState("disconnected");
         clearHeartbeat();
         // Tentar reconectar em 5s se cair
         clearReconnect();
@@ -103,9 +107,10 @@ export const useLanyard = () => {
     };
   }, []);
 
-  return { 
-    data, 
-    isConnected, // Agora você pode mostrar se está "Live" ou não
-    isLoading: !data && isConnected 
+  return {
+    data,
+    isConnected: connectionState === "connected",
+    isLoading: connectionState === "connecting" && !data,
+    connectionState,
   };
 };

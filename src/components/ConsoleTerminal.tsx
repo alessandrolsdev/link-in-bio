@@ -80,8 +80,13 @@ export const ConsoleTerminal = () => {
         animate={{ y: 0 }}
         className="fixed bottom-0 left-0 right-0 z-50 flex justify-center pointer-events-none"
       >
-        <div 
+        <button
+            type="button"
             onClick={() => setIsOpen(!isOpen)}
+            aria-expanded={isOpen}
+            aria-controls="nexus-console-dialog"
+            aria-haspopup="dialog"
+            aria-label={isOpen ? "Fechar console do sistema" : "Abrir console do sistema"}
             className="pointer-events-auto cursor-pointer bg-zinc-900/90 border-t border-x border-zinc-800 text-zinc-400 hover:text-green-400 hover:border-green-500/50 px-6 py-2 rounded-t-xl backdrop-blur-md flex items-center gap-3 transition-all group shadow-[0_-5px_20px_rgba(0,0,0,0.5)]"
         >
             <div className={`w-2 h-2 rounded-full ${isOpen ? "bg-red-500" : "bg-green-500 animate-pulse"}`} />
@@ -90,9 +95,9 @@ export const ConsoleTerminal = () => {
                 {isOpen ? "CLOSE_TERMINAL" : "SYSTEM_CONSOLE"}
             </span>
             <span className="text-[10px] text-zinc-600 bg-zinc-800 px-1.5 rounded border border-zinc-700 hidden md:block">
-                CTRL+J
+                CTRL+J / CMD+J
             </span>
-        </div>
+        </button>
       </motion.div>
 
       {/* --- O CONSOLE (OVERLAY) --- */}
@@ -107,6 +112,10 @@ export const ConsoleTerminal = () => {
           >
             {/* JANELA CRT */}
             <motion.div 
+                id="nexus-console-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="nexus-console-title"
                 initial={{ scale: 0.95, opacity: 0, y: 20 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.95, opacity: 0, y: 20 }}
@@ -121,9 +130,14 @@ export const ConsoleTerminal = () => {
                 <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 border-b border-zinc-800 z-20">
                     <div className="flex items-center gap-3">
                         <Activity size={16} className="text-green-500" />
-                        <span className="text-xs font-mono text-zinc-300 tracking-widest">NEXUS_AI_CORE // ROOT_ACCESS</span>
+                        <span id="nexus-console-title" className="text-xs font-mono text-zinc-300 tracking-widest">NEXUS_AI_CORE // ROOT_ACCESS</span>
                     </div>
-                    <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-red-500 transition-colors">
+                    <button
+                      type="button"
+                      onClick={() => setIsOpen(false)}
+                      aria-label="Fechar console"
+                      className="text-zinc-500 hover:text-red-500 transition-colors"
+                    >
                         <X size={18} />
                     </button>
                 </div>
@@ -165,6 +179,7 @@ export const ConsoleTerminal = () => {
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder="Insira comando ou pergunta..."
+                        aria-label="Comando ou pergunta"
                         className="flex-1 bg-transparent border-none outline-none text-green-400 placeholder-zinc-700 font-mono text-base"
                         autoComplete="off"
                     />

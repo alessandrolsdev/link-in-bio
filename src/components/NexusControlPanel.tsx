@@ -22,10 +22,13 @@ export const NexusControlPanel = ({ githubSlot, discordSlot }: NexusControlPanel
   return (
     <div className="w-full mb-8">
       {/* HEADER DA BARRA (MANTIDO IGUAL) */}
-      <motion.div 
+      <motion.button
+        type="button"
         onClick={() => setIsExpanded(!isExpanded)}
+        aria-expanded={isExpanded}
+        aria-controls="nexus-control-panel"
         className={`
-          relative z-20 w-full p-4 rounded-xl cursor-pointer border transition-all duration-300 group
+          relative z-20 w-full p-4 rounded-xl cursor-pointer border transition-all duration-300 group text-left
           ${isExpanded 
             ? "bg-zinc-900 border-zinc-700 rounded-b-none" 
             : "bg-zinc-900/60 border-zinc-800 hover:border-zinc-600 hover:bg-zinc-800/80"
@@ -44,11 +47,11 @@ export const NexusControlPanel = ({ githubSlot, discordSlot }: NexusControlPanel
             <div className="flex items-center gap-4 text-xs font-mono text-zinc-400 truncate">
                <div className="flex items-center gap-2 hover:text-white transition-colors">
                   <Github size={14} />
-                  <span>GH_LINK: <span className="text-white">CONNECTED</span></span>
+                  <span>GH_LINK: <span className="text-white">PUBLIC_SIGNAL</span></span>
                </div>
                <div className="hidden sm:flex items-center gap-2 text-zinc-500">
                   <Zap size={14} className="text-yellow-500" />
-                  <span className="truncate max-w-[150px]">System Optimization...</span>
+                  <span className="truncate max-w-[170px]">Widgets externos com fallback explícito</span>
                </div>
             </div>
           </div>
@@ -62,12 +65,13 @@ export const NexusControlPanel = ({ githubSlot, discordSlot }: NexusControlPanel
              </div>
           </div>
         </div>
-      </motion.div>
+      </motion.button>
 
       {/* ÁREA EXPANSÍVEL: AQUI USAMOS OS SLOTS */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
+            id="nexus-control-panel"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
